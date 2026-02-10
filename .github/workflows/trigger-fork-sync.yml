@@ -1,0 +1,23 @@
+name: Trigger fork sync
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+
+jobs:
+  trigger:
+    if: github.repository == 'Team-TriPle/TriPle_Frontend' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger repository_dispatch on fork
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PAT_FORK_SYNC }}
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: 'SongMinQQ',
+              repo: 'TriPle_Frontend',
+              event_type: 'sync-from-upstream',
+            });
