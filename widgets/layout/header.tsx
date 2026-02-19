@@ -6,6 +6,7 @@ import Image from "next/image"
 import { UserRound } from "lucide-react"
 import KakaoLoginBtn from "@/features/auth/KakaoLoginBtn"
 import { hasUserSession } from "@/shared/api/user/hasUserSession"
+import { AUTH_EVENTS } from "@/shared/constants/auth"
 
 const LOGO_HREF = "/"
 const NAV_LINKS = [
@@ -19,6 +20,11 @@ export function Header() {
 
   useEffect(() => {
     let mounted = true
+    const handleSessionExpired = () => {
+      if(mounted){
+        setHasSession(false)
+      }
+    }
 
     const syncSession = async () => {
       try {
@@ -34,9 +40,11 @@ export function Header() {
     }
 
     void syncSession()
+    window.addEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired)
 
     return () => {
       mounted = false
+      window.removeEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired)
     }
   }, [])
 

@@ -74,7 +74,7 @@ test.describe("Kakao OAuth callback login", () => {
 
     await page.goto(`${LOCAL_BASE_URL}/kakao?code=success-code`);
 
-    await expect(page.getByText("Login complete")).toBeVisible();
+    await expect(page.getByText("로그인 완료", { exact: true })).toBeVisible();
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
     await expect(page.locator(KAKAO_LOGIN_BUTTON_SELECTOR)).toHaveCount(0);
 
@@ -109,7 +109,7 @@ test.describe("Kakao OAuth callback login", () => {
 
     await page.goto(`${LOCAL_BASE_URL}/kakao?code=invalid-code`);
 
-    await expect(page.getByText("Login failed")).toBeVisible();
+    await expect(page.getByText("로그인 실패", { exact: true })).toBeVisible();
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
   });
 
@@ -139,7 +139,7 @@ test.describe("Kakao OAuth callback login", () => {
 
     await page.goto(`${LOCAL_BASE_URL}/kakao?code=expired-session-code`);
 
-    await expect(page.getByText("Session expired")).toBeVisible();
+    await expect(page.getByText("세션 만료", { exact: true })).toBeVisible();
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
   });
 });
