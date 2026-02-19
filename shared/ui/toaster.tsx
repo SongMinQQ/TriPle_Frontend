@@ -1,5 +1,6 @@
 'use client'
 
+import { TOAST_AUTO_DISMISS_DELAY } from '@/shared/constants/toast'
 import { useToast } from '@/shared/hooks/use-toast'
 import {
   Toast,
@@ -14,7 +15,7 @@ export function Toaster() {
   const { toasts } = useToast()
 
   return (
-    <ToastProvider>
+    <ToastProvider duration={TOAST_AUTO_DISMISS_DELAY}>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>

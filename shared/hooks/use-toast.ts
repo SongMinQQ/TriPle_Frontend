@@ -3,10 +3,13 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
 
+import {
+  TOAST_AUTO_DISMISS_DELAY,
+  TOAST_REMOVE_DELAY,
+} from '@/shared/constants/toast'
 import type { ToastActionElement, ToastProps } from '@/shared/ui/toast'
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -54,6 +57,33 @@ interface State {
 }
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+const autoDismissTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
+const clearAutoDismissTimeout = (toastId: string) => {
+  const timeout = autoDismissTimeouts.get(toastId)
+  if (!timeout) {
+    return
+  }
+
+  clearTimeout(timeout)
+  autoDismissTimeouts.delete(toastId)
+}
+
+const addToAutoDismissQueue = (toastId: string) => {
+  if (autoDismissTimeouts.has(toastId)) {
+    return
+  }
+
+  const timeout = setTimeout(() => {
+    autoDismissTimeouts.delete(toastId)
+    dispatch({
+      type: 'DISMISS_TOAST',
+      toastId,
+    })
+  }, TOAST_AUTO_DISMISS_DELAY)
+
+  autoDismissTimeouts.set(toastId, timeout)
+}
 
 const addToRemoveQueue = (toastId: string) => {
   if (toastTimeouts.has(toastId)) {
@@ -93,9 +123,11 @@ export const reducer = (state: State, action: Action): State => {
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
+        clearAutoDismissTimeout(toastId)
         addToRemoveQueue(toastId)
       } else {
         state.toasts.forEach((toast) => {
+          clearAutoDismissTimeout(toast.id)
           addToRemoveQueue(toast.id)
         })
       }
@@ -160,6 +192,8 @@ function toast({ ...props }: Toast) {
       },
     },
   })
+
+  addToAutoDismissQueue(id)
 
   return {
     id: id,

@@ -1,6 +1,6 @@
 ﻿## 1. 목적
 
-이 프로젝트에서 API 관련 질문이 들어오면, Assistant는 추측하지 않고 **Notion MCP 도구를 통해 상윤’s space의 API 문서 데이터베이스(DB)** 를 확인하여 답변한다.
+이 프로젝트에서 API 관련 질문이 들어오면, Assistant는 추측하지 않고 **Notion MCP 도구를 통해 Team Triple의 API 문서 데이터베이스(DB)** 를 확인하여 답변한다.
 
 ---
 
@@ -8,7 +8,7 @@
 
 ### 2.1 API 질문 답변 시 Notion DB 확인은 필수
 
-- 사용자가 API 관련 질문을 하면 반드시 **Notion MCP로 상윤’s space API명세서 DB**를 조회한다.
+- 사용자가 API 관련 질문을 하면 반드시 **Notion MCP로 Team Triple space API명세서 DB**를 조회한다.
 - 기억/추정으로 답변하지 않는다.
 
 ### 2.2 Request/Response Payload는 DB가 아니라 문서에 있음
@@ -42,6 +42,7 @@
 
 - 테스트 실행 및 검증은 Playwright MCP로 수행한다.
 - 핵심 사용자 플로우는 E2E 기준으로 작성한다.
+- 권한이 필요한 요청의 경우 tests/e2e/kakao-login.spec.js의 내용을 선 수행하여 권한을 취득한다.
 - 네트워크 의존이 큰 경우 Playwright route mocking을 사용한다.
 - 테스트 결과는 "재현 가능한 단계 + 기대 결과" 형태로 기록한다.
 

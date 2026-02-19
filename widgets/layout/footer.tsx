@@ -9,17 +9,13 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-3">
             <Link href="/" className="flex items-center gap-2">
-              {/* <span className="relative h-9 w-32"> */}
                 <Image
                   src="/TriPle_logo_sm.png"
-                alt="TriPle Logo"
-                width={50}
-                height={10}
-                  // fill
-                  // sizes="128px"
-                  // className="object-cover"
+                  alt="TriPle Logo"
+                  width={45}
+                  height={20}
+                  // style={{ width: "auto", height: "auto" }}
                 />
-              {/* </span> */}
             </Link>
             <p className="max-w-xs text-xs text-muted-foreground leading-relaxed">
               {"일정, 비용, 추억을 하나로. 여행 그룹 기반 일정 관리 서비스"}
