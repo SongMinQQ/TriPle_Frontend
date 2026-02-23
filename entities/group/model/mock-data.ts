@@ -35,11 +35,15 @@ export interface Review {
 
 export interface Group {
   id: string
+  groupId: number
   name: string
   description: string
   image?: string
+  thumbNailUrl: string
   memberCount: number
+  currentMemberCount: number
   maxMembers: number
+  memberLimit: number
   members: Member[]
   schedules: Schedule[]
   reviewPhotos: ReviewPhoto[]
@@ -161,11 +165,15 @@ export const mockReviews: Review[] = [
 
 export const mockGroup: Group = {
   id: "1",
+  groupId: 1,
   name: "즐거운 여행단",
   description: "MBTI P들의 모임입니다. 맛집 탐방!",
-  // image: "/placeholder.svg?height=80&width=80&query=group friends travel party",
+  image: "/trip_group_placeholder.png",
+  thumbNailUrl: "/trip_group_placeholder.png",
   memberCount: 6,
+  currentMemberCount: 6,
   maxMembers: 10,
+  memberLimit: 10,
   members: mockMembers,
   schedules: mockSchedules,
   reviewPhotos: mockReviewPhotos,
