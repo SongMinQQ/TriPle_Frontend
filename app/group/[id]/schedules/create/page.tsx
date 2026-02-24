@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Calendar } from "lucide-react"
 import { mockMembers } from "@/entities/group/model/mock-data"
+import { FieldLabelWithCounter } from "@/shared/ui/field-label-with-counter"
 
 export default function ScheduleCreatePage() {
   const [title, setTitle] = useState("")
@@ -22,14 +23,12 @@ export default function ScheduleCreatePage() {
       <h1 className="text-xl font-bold text-foreground">{"일정 생성"}</h1>
 
       <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-foreground" htmlFor="schedule-name">
-            {"일정명"}
-          </label>
-          <span className="text-xs text-muted-foreground">
-            {title.length}/20
-          </span>
-        </div>
+        <FieldLabelWithCounter
+          htmlFor="schedule-name"
+          label={"일정명"}
+          currentLength={title.length}
+          maxLength={20}
+        />
         <input
           id="schedule-name"
           type="text"
@@ -42,7 +41,7 @@ export default function ScheduleCreatePage() {
       </div>
 
       <div className="mt-8">
-        <label className="block text-sm font-semibold text-foreground">{"날짜"}</label>
+        <FieldLabelWithCounter label={"날짜"} />
         <div className="mt-3 flex items-center gap-3">
           <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2.5">
             <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -69,10 +68,14 @@ export default function ScheduleCreatePage() {
       </div>
 
       <div className="mt-8">
-        <label className="block text-sm font-semibold text-foreground">
-          {"일정 멤버"}{" "}
-          <span className="text-primary">{selectedMembers.length}</span>
-        </label>
+        <FieldLabelWithCounter
+          label={
+            <>
+              {"일정 멤버"}{" "}
+              <span className="text-primary">{selectedMembers.length}</span>
+            </>
+          }
+        />
         <div className="mt-4 flex flex-wrap gap-3">
           {mockMembers.slice(0, 4).map((member) => {
             const isSelected = selectedMembers.includes(member.id)

@@ -1,6 +1,13 @@
 import axios from "axios";
 import { AUTH_EVENTS } from "../constants/auth";
 import { TOAST_MESSAGES } from "../constants/toast";
+import {
+  clearCsrfToken,
+  CSRF_TOKEN_HEADER,
+  getCsrfToken,
+  readCsrfTokenFromHeaders,
+  setCsrfToken,
+} from "@/shared/lib/csrf-token";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_ADDRESS;
 
@@ -12,10 +19,49 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const CSRF_REQUIRED_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+api.interceptors.request.use((config) => {
+  const method = config.method?.toUpperCase();
+
+  if (method && CSRF_REQUIRED_METHODS.has(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      const headers = config.headers as
+        | { set?: (key: string, value: string) => void }
+        | undefined;
+
+      if (headers?.set) {
+        headers.set(CSRF_TOKEN_HEADER, csrfToken);
+      } else {
+        config.headers = {
+          ...config.headers,
+          [CSRF_TOKEN_HEADER]: csrfToken,
+        };
+      }
+    }
+  }
+
+  return config;
+});
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const csrfToken = readCsrfTokenFromHeaders(response.headers);
+    if (csrfToken) {
+      setCsrfToken(csrfToken);
+    }
+
+    return response;
+  },
   (error) => {
+    const csrfToken = readCsrfTokenFromHeaders(error?.response?.headers);
+    if (csrfToken) {
+      setCsrfToken(csrfToken);
+    }
+
     if (error?.response?.status === 401 && typeof window !== "undefined") {
+      clearCsrfToken();
       window.dispatchEvent(new CustomEvent(AUTH_EVENTS.SESSION_EXPIRED));
 
       void import("@/shared/hooks/use-toast").then(({ toast }) => {

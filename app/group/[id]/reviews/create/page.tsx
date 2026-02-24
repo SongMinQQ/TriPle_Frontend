@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ChevronDown } from "lucide-react"
 import { MarkdownEditor } from "@/shared/ui/markdown-editor"
+import { FieldLabelWithCounter } from "@/shared/ui/field-label-with-counter"
 import { mockGroup } from "@/entities/group/model/mock-data"
 
 export default function ReviewCreatePage() {
@@ -29,14 +30,12 @@ export default function ReviewCreatePage() {
       <h1 className="text-xl font-bold text-foreground">{"후기 작성"}</h1>
 
       <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-foreground" htmlFor="review-title">
-            {"제목"}
-          </label>
-          <span className="text-xs text-muted-foreground">
-            {title.length}/20
-          </span>
-        </div>
+        <FieldLabelWithCounter
+          htmlFor="review-title"
+          label={"제목"}
+          currentLength={title.length}
+          maxLength={20}
+        />
         <input
           id="review-title"
           type="text"

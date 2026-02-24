@@ -20,3 +20,15 @@ export interface GetPublicGroupsParams {
   cursor?: number;
   size: number;
 }
+
+export interface GroupGenerateData {
+  name: string;
+  description: string;
+  memberLimit: number;
+  groupKind: string;
+  thumbNailUrl: string;
+}
+
+export interface GroupGenerateResponse {
+  groupId: number;
+}

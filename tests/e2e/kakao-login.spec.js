@@ -6,6 +6,8 @@ const USER_ME_API_PATTERN = "**/users/me";
 const KAKAO_AUTH_URL_PATTERN =
   /https:\/\/(accounts\.kakao\.com\/login|kauth\.kakao\.com\/oauth\/authorize)/;
 const KAKAO_LOGIN_BUTTON_SELECTOR = 'button:has(img[src*="kakao_login_medium_narrow.png"])';
+const CSRF_STORAGE_KEY = "auth.csrf.token";
+const MOCK_CSRF_TOKEN = "csrf-token-from-login";
 
 test.describe("Kakao OAuth callback login", () => {
   test.use({ ignoreHTTPSErrors: true });
@@ -62,6 +64,8 @@ test.describe("Kakao OAuth callback login", () => {
         status: 200,
         headers: {
           "content-type": "application/json",
+          "x-csrf-token": MOCK_CSRF_TOKEN,
+          "access-control-expose-headers": "X-CSRF-Token",
           "set-cookie": "JSESSIONID=mock-session-id; Path=/; HttpOnly; Secure; SameSite=None",
         },
         body: JSON.stringify({
@@ -81,6 +85,11 @@ test.describe("Kakao OAuth callback login", () => {
     const cookies = await page.context().cookies(loginApiOrigin || LOCAL_BASE_URL);
     const jsession = cookies.find((cookie) => cookie.name === "JSESSIONID");
     expect(jsession).toBeTruthy();
+
+    const csrfTokenInStorage = await page.evaluate((storageKey) => {
+      return window.sessionStorage.getItem(storageKey);
+    }, CSRF_STORAGE_KEY);
+    expect(csrfTokenInStorage).toBe(MOCK_CSRF_TOKEN);
   });
 
   test("Fail Case: 400 response shows login failure message", async ({ page }) => {
