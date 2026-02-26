@@ -3,13 +3,13 @@
 import { Fragment, useState } from "react";
 
 import {
-  GROUP_MEMBER_DEFAULT_LIMIT,
   type GroupGenerateOptionalFormState,
   type GroupGenerateRequiredFormState,
-} from "@/features/group/model/groupGenerateForm";
-import GroupGenerateOptionalFields from "@/features/group/ui/GroupGenerateOptionalFields";
-import GroupGenerateRequiredFields from "@/features/group/ui/GroupGenerateRequiredFields";
-import GroupGenerateSubmitBtn from "@/features/group/ui/GroupGenerateSubmitBtn";
+} from "@/features/group/generate/model/groupGenerateForm";
+import { GROUP_MEMBER_DEFAULT_LIMIT } from "@/entities/group/model/constants";
+import GroupGenerateOptionalFields from "@/features/group/generate/ui/GroupGenerateOptionalFields";
+import GroupGenerateRequiredFields from "@/features/group/generate/ui/GroupGenerateRequiredFields";
+import GroupGenerateSubmitBtn from "@/features/group/generate/ui/GroupGenerateSubmitBtn";
 
 const GroupGenerateForm = () => {
   const [requiredForm, setRequiredForm] = useState<GroupGenerateRequiredFormState>({

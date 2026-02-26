@@ -1,7 +1,7 @@
 ﻿import { ImagePlus } from "lucide-react";
 import { useRef, type ChangeEvent } from "react";
 
-import type { GroupGenerateOptionalFormState } from "@/features/group/model/groupGenerateForm";
+import type { GroupGenerateOptionalFormState } from "@/features/group/generate/model/groupGenerateForm";
 import { LabeledFileSelectButtonField } from "@/shared/ui/labeled-form-fields";
 
 interface GroupGenerateOptionalFieldsProps {

@@ -8,6 +8,8 @@ export const REQUEST_PATHS = {
   },
   GROUPS: {
     LIST: "/groups",
+    DETAIL: (groupId: number) => `/groups/${groupId}`,
+    MENU: (groupId: number) => `/groups/${groupId}/menu`,
   },
   USERS: {
     ME: "/users/me",

@@ -1,6 +1,6 @@
 ﻿import { Header } from "@/widgets/layout/header"
 import { Footer } from "@/widgets/layout/footer"
-import GroupGenerateForm from "@/features/group/GroupGenerateForm"
+import GroupGenerateForm from "@/features/group/generate/GroupGenerateForm"
 
 export default function GroupCreatePage() {
   

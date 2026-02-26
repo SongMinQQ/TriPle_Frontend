@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type {
   GroupGenerateOptionalFormState,
   GroupGenerateRequiredFormState,
-} from "@/features/group/model/groupGenerateForm";
+} from "@/features/group/generate/model/groupGenerateForm";
 import { generateGroup } from "@/shared/api/group/generateGroup";
 import type { GroupGenerateData } from "@/shared/api/group/types";
 import { toast } from "@/shared/hooks/use-toast";

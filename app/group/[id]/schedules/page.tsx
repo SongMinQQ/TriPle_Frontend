@@ -14,7 +14,12 @@ export default async function SchedulesPage() {
 
       <div className="mt-6 flex flex-col gap-3">
         {group.schedules.map((schedule) => (
-          <ScheduleCard key={schedule.id} schedule={schedule} showLockMessage />
+          <ScheduleCard
+            key={schedule.id}
+            schedule={schedule}
+            showLockMessage
+            groupId={group.id}
+          />
         ))}
       </div>
 

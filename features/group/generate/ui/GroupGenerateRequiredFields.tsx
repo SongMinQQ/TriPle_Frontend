@@ -1,11 +1,11 @@
-﻿import type { GroupGenerateRequiredFormState } from "@/features/group/model/groupGenerateForm";
+﻿import type { GroupGenerateRequiredFormState } from "@/features/group/generate/model/groupGenerateForm";
 import { FieldLabelWithCounter } from "@/shared/ui/field-label-with-counter";
 import {
   GROUP_DESCRIPTION_MAX_LENGTH,
   GROUP_MEMBER_MAX_LIMIT,
   GROUP_MEMBER_MIN_LIMIT,
   GROUP_NAME_MAX_LENGTH,
-} from "@/features/group/model/groupGenerateForm";
+} from "@/entities/group/model/constants";
 import {
   LabeledInputField,
   LabeledRangeField,

@@ -33,7 +33,7 @@ export default function MembersPage() {
     <div>
       <h1 className="text-xl font-bold text-foreground">
         {"멤버"}{" "}
-        <span className="text-primary">{group.memberCount}</span>
+        <span className="text-primary">{group.currentMemberCount}</span>
       </h1>
 
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">

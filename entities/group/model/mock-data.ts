@@ -33,6 +33,8 @@ export interface Review {
   photo: string
 }
 
+export type GroupRole = "OWNER" | "MEMBER" | "GUEST" | string
+
 export interface Group {
   id: string
   groupId: number
@@ -40,10 +42,9 @@ export interface Group {
   description: string
   image?: string
   thumbNailUrl: string
-  memberCount: number
   currentMemberCount: number
-  maxMembers: number
   memberLimit: number
+  role: GroupRole
   members: Member[]
   schedules: Schedule[]
   reviewPhotos: ReviewPhoto[]
@@ -170,10 +171,9 @@ export const mockGroup: Group = {
   description: "MBTI P들의 모임입니다. 맛집 탐방!",
   image: "/trip_group_placeholder.png",
   thumbNailUrl: "/trip_group_placeholder.png",
-  memberCount: 6,
   currentMemberCount: 6,
-  maxMembers: 10,
   memberLimit: 10,
+  role: "GUEST",
   members: mockMembers,
   schedules: mockSchedules,
   reviewPhotos: mockReviewPhotos,
