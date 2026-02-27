@@ -22,8 +22,11 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${notoSansKR.className} antialiased`}>
         <QueryProvider>
-          {children}
-          <Toaster />
+          <div id="app-root" className="isolate">
+            {children}
+            <Toaster />
+          </div>
+          <div id="modal-root" />
         </QueryProvider>
       </body>
     </html>

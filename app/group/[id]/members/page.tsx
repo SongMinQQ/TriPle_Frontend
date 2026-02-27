@@ -1,9 +1,10 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { mockGroup } from "@/entities/group/model/mock-data"
 import { MemberCard } from "@/entities/member/ui/member-card"
-import { Copy, Check, Link2, X } from "lucide-react"
+import { Modal } from "@/shared/ui/modal"
+import { Copy, Check, Link2 } from "lucide-react"
 
 export default function MembersPage() {
   const group = mockGroup
@@ -11,6 +12,11 @@ export default function MembersPage() {
   const [copied, setCopied] = useState(false)
 
   const inviteLink = `https://triple.app/invite/${group.id}?code=aBcD1234`
+
+  const closeModal = () => {
+    setShowModal(false)
+    setCopied(false)
+  }
 
   const handleCopy = async () => {
     try {
@@ -52,56 +58,39 @@ export default function MembersPage() {
         </button>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-background p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground">{"초대 링크"}</h2>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false)
-                  setCopied(false)
-                }}
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <p className="mt-3 text-sm text-muted-foreground">
-              {"아래 링크를 공유해 그룹에 멤버를 초대하세요."}
-            </p>
-
-            <div className="mt-5 flex items-center gap-2 rounded-lg bg-muted px-4 py-3">
-              <Link2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="flex-1 truncate text-sm text-foreground">{inviteLink}</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleCopy}
-              className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition-all ${
-                copied
-                  ? "bg-green-500 text-background"
-                  : "bg-primary text-primary-foreground hover:opacity-90"
-              }`}
-            >
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  {"복사 완료!"}
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  {"링크 복사하기"}
-                </>
-              )}
-            </button>
-          </div>
+      <Modal
+        open={showModal}
+        onClose={closeModal}
+        title={"초대 링크"}
+        description={"아래 링크를 공유해 그룹에 멤버를 초대하세요."}
+      >
+        <div className="mt-5 flex items-center gap-2 rounded-lg bg-muted px-4 py-3">
+          <Link2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="flex-1 truncate text-sm text-foreground">{inviteLink}</span>
         </div>
-      )}
+
+        <button
+          type="button"
+          onClick={handleCopy}
+          className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition-all ${
+            copied
+              ? "bg-green-500 text-background"
+              : "bg-primary text-primary-foreground hover:opacity-90"
+          }`}
+        >
+          {copied ? (
+            <>
+              <Check className="h-4 w-4" />
+              {"복사 완료!"}
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" />
+              {"링크 복사하기"}
+            </>
+          )}
+        </button>
+      </Modal>
     </div>
   )
 }
