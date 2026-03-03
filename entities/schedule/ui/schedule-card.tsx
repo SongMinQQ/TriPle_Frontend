@@ -1,6 +1,6 @@
 ﻿import Link from "next/link"
 import { Calendar, Users, Lock } from "lucide-react"
-import type { Schedule } from "@/entities/group/model/mock-data"
+import type { Schedule } from "@/entities/group/model/types"
 
 interface ScheduleCardProps {
   schedule: Schedule

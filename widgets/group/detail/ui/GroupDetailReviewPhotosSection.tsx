@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ImagePlus } from "lucide-react"
-import type { Group } from "@/entities/group/model/mock-data"
+import type { Group } from "@/entities/group/model/types"
 import { GroupDetailEmptyState } from "@/widgets/group/detail/ui/GroupDetailEmptyState"
 import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader"
 

@@ -1,37 +1,52 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Home, CalendarRange, BookOpen, Share2, Users } from "lucide-react"
-import { useGroupMenuQuery } from "@/entities/group/api/group.queries"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Home, CalendarRange, BookOpen, Share2, Users } from "lucide-react";
+import { useGroupMenuQuery } from "@/entities/group/queries/group.queries";
 import {
   GroupMembershipActionButton,
   getGroupMembershipAction,
   getMembershipStateFromGroupRole,
-} from "@/features/group/detail/ui/GroupMembershipActionButton"
-import { cn } from "@/shared/lib/utils"
+} from "@/features/group/detail/ui/GroupMembershipActionButton";
+import { useGroupMembershipAction } from "@/features/group/detail/model/useGroupMembershipAction";
+import { cn } from "@/shared/lib/utils";
 
 interface GroupSidebarProps {
-  groupId: string
+  groupId: string;
 }
 
 const navItems = [
   { label: "홈", icon: Home, href: "" },
   { label: "여행 일정", icon: CalendarRange, href: "/schedules" },
   { label: "여행 후기", icon: BookOpen, href: "/reviews" },
-]
+];
 
 export function GroupSidebar({ groupId }: GroupSidebarProps) {
-  const pathname = usePathname()
-  const { data: groupMenu } = useGroupMenuQuery(groupId)
+  const pathname = usePathname();
+  const { data: groupMenu } = useGroupMenuQuery(groupId);
+  const { isJoining, isLeaving, requestJoinGroup, requestLeaveGroup } =
+    useGroupMembershipAction(groupId);
 
   const membershipAction = groupMenu?.role
     ? getGroupMembershipAction(getMembershipStateFromGroupRole(groupMenu.role))
-    : null
+    : null;
+  const isJoinAction = membershipAction === "join";
+  const isLeaveAction = membershipAction === "leave";
+  let isMembershipActionDisabled = false;
+  let handleMembershipActionClick: (() => void) | undefined;
+
+  if (isJoinAction) {
+    isMembershipActionDisabled = isJoining;
+    handleMembershipActionClick = () => void requestJoinGroup();
+  } else if (isLeaveAction) {
+    isMembershipActionDisabled = isLeaving;
+    handleMembershipActionClick = () => void requestLeaveGroup();
+  }
 
   if (!groupMenu) {
-    return null
+    return null;
   }
 
   return (
@@ -66,7 +81,12 @@ export function GroupSidebar({ groupId }: GroupSidebarProps) {
               </span>
             </div>
             {membershipAction ? (
-              <GroupMembershipActionButton action={membershipAction} className="mt-2" />
+              <GroupMembershipActionButton
+                action={membershipAction}
+                className="mt-2"
+                disabled={isMembershipActionDisabled}
+                onClick={handleMembershipActionClick}
+              />
             ) : null}
           </div>
         </div>
@@ -77,8 +97,8 @@ export function GroupSidebar({ groupId }: GroupSidebarProps) {
 
         <nav className="mt-6 flex flex-col gap-1 border-t border-border pt-4">
           {navItems.map((item) => {
-            const fullHref = `/group/${groupId}${item.href}`
-            const isActive = pathname === fullHref
+            const fullHref = `/group/${groupId}${item.href}`;
+            const isActive = pathname === fullHref;
             return (
               <Link
                 key={item.label}
@@ -87,16 +107,16 @@ export function GroupSidebar({ groupId }: GroupSidebarProps) {
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <item.icon className="h-5 w-5" />
                 {item.label}
               </Link>
-            )
+            );
           })}
         </nav>
       </div>
     </aside>
-  )
+  );
 }

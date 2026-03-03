@@ -1,14 +1,9 @@
-import type { OAuthLoginRequest, OAuthLoginResponse } from "@/features/auth/types/auth";
-import api from "@/shared/api/common";
+import type { OAuthLoginRequest, OAuthLoginResponse } from "./types";
+import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 
 const KAKAO_PROVIDER = "KAKAO";
 
-/**
- * @param code 
- * 카카오 로그인 시 발급받는 인가 코드
- * @returns 
- */
 export const kakaoOauthLogin = async (code: string) => {
   const payload: OAuthLoginRequest = {
     code,

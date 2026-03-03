@@ -4,7 +4,7 @@ import React from "react"
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import Image from "next/image"
-import type { ReviewPhoto } from "@/entities/group/model/mock-data"
+import type { ReviewPhoto } from "@/entities/group/model/types"
 
 interface PhotoCarouselProps {
   photos: ReviewPhoto[]

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { AUTH_EVENTS } from "../constants/auth";
-import { TOAST_MESSAGES } from "../constants/toast";
+import { AUTH_EVENTS } from "@/shared/constants/auth";
+import { TOAST_MESSAGES } from "@/shared/constants/toast";
 import {
   clearCsrfToken,
   CSRF_TOKEN_HEADER,

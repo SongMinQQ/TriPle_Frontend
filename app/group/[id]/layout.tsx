@@ -1,11 +1,11 @@
 import React from "react"
 import { notFound } from "next/navigation"
 import { cookies } from "next/headers"
-import type { GetGroupDetailResponse } from "@/shared/api/group/types"
+import type { GetGroupDetailResponse } from "@/entities/group/model/api/types"
 import { REQUEST_PATHS } from "@/shared/constants/paths"
 import { Header } from "@/widgets/layout/header"
 import { Footer } from "@/widgets/layout/footer"
-import { GroupSidebar } from "@/widgets/group/group-sidebar"
+import { GroupSidebar } from "@/widgets/group/layout/group-sidebar"
 
 const NOT_FOUND_RESPONSE_STATUS = new Set([401, 403, 404])
 

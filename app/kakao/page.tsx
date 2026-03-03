@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isAxiosError } from "axios";
 import { toast } from "@/shared/hooks/use-toast";
-import { kakaoOauthLogin } from "@/shared/api/member/kakaoOauthLogin";
+import { kakaoOauthLogin } from "@/features/auth/api/kakaoOauthLogin";
 import { consumeOAuthReturnPath } from "@/shared/lib/auth-return-path";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
 

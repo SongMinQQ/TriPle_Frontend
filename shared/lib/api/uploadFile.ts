@@ -1,6 +1,5 @@
 import axios from "axios";
-
-import api from "@/shared/api/common";
+import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 
 interface UploadPresignRequest {
@@ -37,9 +36,6 @@ interface UploadCompleteResponse {
   }>;
 }
 
-/**
- * Upload a file through the common presigned-url flow and return uploaded key.
- */
 export const uploadFile = async (file: File): Promise<string> => {
   const presignRequest: UploadPresignRequest = {
     presignedUrlRequestDtos: [

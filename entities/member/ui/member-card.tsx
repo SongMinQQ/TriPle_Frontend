@@ -1,6 +1,6 @@
 ﻿import Image from "next/image"
 import { Crown } from "lucide-react"
-import type { Member } from "@/entities/group/model/mock-data"
+import type { Member } from "@/entities/group/model/types"
 import { PLACEHOLDERS } from "@/shared/constants/constants"
 
 interface MemberCardProps {

@@ -1,13 +1,9 @@
-import api from "@/shared/api/common";
+import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 import { clearCsrfToken } from "@/shared/lib/csrf-token";
 
 let inFlightSessionCheck: Promise<boolean> | null = null;
 
-/**
- * 사용자 세션이 존재하는지 검증.
- * 200 => authenticated, 401 => unauthenticated/expired.
- */
 export const hasUserSession = async (): Promise<boolean> => {
   if (inFlightSessionCheck) {
     return inFlightSessionCheck;

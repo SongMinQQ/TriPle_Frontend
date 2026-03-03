@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
-import type { Group } from "@/entities/group/model/mock-data"
+import type { Group } from "@/entities/group/model/types"
 import { MemberCard } from "@/entities/member/ui/member-card"
 import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader"
 

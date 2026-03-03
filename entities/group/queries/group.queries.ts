@@ -1,15 +1,18 @@
 "use client";
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getGroupDetail } from "@/shared/api/group/getGroupDetail";
-import { getGroupMenu } from "@/shared/api/group/getGroupMenu";
-import { getPublicGroups } from "@/shared/api/group/getPublicGroups";
-import { applyGroupDetailToGroup, toGroupSummaryPage } from "@/entities/group/model/mappers";
-import type { Group } from "@/entities/group/model/mock-data";
-import type { GroupSummary, GroupSummaryPage } from "@/entities/group/model/types";
-import type { GetGroupMenuResponse } from "@/shared/api/group/types";
+import { getGroupDetail } from "@/entities/group/model/api/getGroupDetail";
+import { getGroupMenu } from "@/entities/group/model/api/getGroupMenu";
+import { getPublicGroups } from "@/entities/group/model/api/getPublicGroups";
+import { applyGroupDetailToGroup } from "@/entities/group/model/mappers";
+import type { Group } from "@/entities/group/model/types";
+import type {
+  GetGroupMenuResponse,
+  GetPublicGroupsResponse,
+  PublicGroupListItemDto,
+} from "@/entities/group/model/api/types";
 
-export type { GroupSummary as GroupListItem };
+export type { PublicGroupListItemDto as GroupListItem };
 
 interface UsePublicGroupsOptions {
   size?: number;
@@ -33,9 +36,8 @@ const fetchPublicGroupsPage = async ({
 }: {
   cursor?: number;
   size: number;
-}): Promise<GroupSummaryPage> => {
-  const response = await getPublicGroups({ cursor, size });
-  return toGroupSummaryPage(response);
+}): Promise<GetPublicGroupsResponse> => {
+  return await getPublicGroups({ cursor, size });
 };
 
 const createEmptyGroup = (routeGroupId: string): Group => {
@@ -117,7 +119,7 @@ const fetchGroupMenuForSidebar = async (
 export const usePublicGroupsInfiniteQuery = ({
   size = DEFAULT_PAGE_SIZE,
 }: UsePublicGroupsOptions = {}) =>
-  useInfiniteQuery<GroupSummaryPage>({
+  useInfiniteQuery<GetPublicGroupsResponse>({
     queryKey: GROUP_QUERY_KEYS.publicList(size),
     queryFn: ({ pageParam }) =>
       fetchPublicGroupsPage({

@@ -1,5 +1,5 @@
 import { CalendarRange } from "lucide-react"
-import type { Group } from "@/entities/group/model/mock-data"
+import type { Group } from "@/entities/group/model/types"
 import { ScheduleCard } from "@/entities/schedule/ui/schedule-card"
 import { GroupDetailEmptyState } from "@/widgets/group/detail/ui/GroupDetailEmptyState"
 import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader"

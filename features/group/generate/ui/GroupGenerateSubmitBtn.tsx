@@ -7,8 +7,8 @@ import type {
   GroupGenerateOptionalFormState,
   GroupGenerateRequiredFormState,
 } from "@/features/group/generate/model/groupGenerateForm";
-import { generateGroup } from "@/shared/api/group/generateGroup";
-import type { GroupGenerateData } from "@/shared/api/group/types";
+import { generateGroup } from "@/entities/group/model/api/generateGroup";
+import type { GroupGenerateData } from "@/entities/group/model/api/types";
 import { toast } from "@/shared/hooks/use-toast";
 
 interface GroupGenerateSubmitBtnProps {

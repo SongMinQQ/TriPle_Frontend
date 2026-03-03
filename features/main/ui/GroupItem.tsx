@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { GroupItem as GroupItemType } from "../types/group";
+import type { PublicGroupListItemDto } from "@/entities/group/model/api/types";
 
 const DESCRIPTION_PREVIEW_LENGTH = 120;
 
 interface GroupItemProps {
-  group: GroupItemType;
+  group: PublicGroupListItemDto;
 }
 
 const GroupItem = ({ group }: GroupItemProps) => {

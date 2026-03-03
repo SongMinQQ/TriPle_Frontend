@@ -7,9 +7,6 @@ export interface PublicGroupListItemDto {
   thumbNailUrl: string;
 }
 
-/**
- * 공개 그룹 목록 조회 API 응답 DTO.
- */
 export interface GetPublicGroupsResponse {
   items: PublicGroupListItemDto[];
   nextCursor: number | null;
@@ -56,10 +53,6 @@ export interface GroupDetailRecentReviewDto {
 
 export type GroupDetailRole = "OWNER" | "MEMBER" | "GUEST" | string;
 
-/**
- * 그룹 상세 조회 API 응답 DTO.
- * 목록 아이템 DTO의 공통 필드를 재사용하고 상세 전용 필드를 확장한다.
- */
 export interface GetGroupDetailResponse
   extends Pick<
     PublicGroupListItemDto,
@@ -73,10 +66,6 @@ export interface GetGroupDetailResponse
   recentReviews?: GroupDetailRecentReviewDto[];
 }
 
-/**
- * 그룹 메뉴 조회 API 응답 DTO.
- * 사이드바에 필요한 최소 필드만 포함한다.
- */
 export interface GetGroupMenuResponse
   extends Pick<
     PublicGroupListItemDto,

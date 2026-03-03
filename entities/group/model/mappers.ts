@@ -1,12 +1,10 @@
 import type {
   GetGroupDetailResponse,
-  GetPublicGroupsResponse,
+  GroupDetailRecentPhotoDto,
   GroupDetailRecentReviewDto,
   GroupDetailRecentTravelDto,
-  PublicGroupListItemDto,
-} from "@/shared/api/group/types"
-import type { Group, Review, ReviewPhoto, Schedule } from "./mock-data"
-import type { GroupSummary, GroupSummaryPage } from "./types"
+} from "@/entities/group/model/api/types"
+import type { Group, Review, ReviewPhoto, Schedule } from "./types"
 import {
   calculateInclusiveDayCountFromIsoDates,
   formatIsoDateToDot,
@@ -16,23 +14,6 @@ import {
   GROUP_REVIEW_TITLE_ELLIPSIS,
   GROUP_REVIEW_TITLE_MAX_LENGTH,
 } from "./constants"
-
-export const toGroupSummary = (dto: PublicGroupListItemDto): GroupSummary => ({
-  groupId: dto.groupId,
-  name: dto.name,
-  description: dto.description,
-  currentMemberCount: dto.currentMemberCount,
-  memberLimit: dto.memberLimit,
-  thumbNailUrl: dto.thumbNailUrl,
-})
-
-export const toGroupSummaryPage = (
-  response: GetPublicGroupsResponse
-): GroupSummaryPage => ({
-  items: response.items.map(toGroupSummary),
-  nextCursor: response.nextCursor,
-  hasNext: response.hasNext,
-})
 
 const createReviewTitle = (content: string): string => {
   const trimmed = content.trim()
@@ -74,7 +55,7 @@ const mapRecentReviewToReview = (review: GroupDetailRecentReviewDto): Review => 
 })
 
 const mapRecentPhotoToReviewPhoto = (
-  photo: { imageId: number; imageUrl: string },
+  photo: GroupDetailRecentPhotoDto,
   index: number
 ): ReviewPhoto => ({
   id: String(photo.imageId),

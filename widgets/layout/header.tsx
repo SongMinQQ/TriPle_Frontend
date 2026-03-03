@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { UserRound } from "lucide-react"
 import KakaoLoginBtn from "@/features/auth/KakaoLoginBtn"
-import { hasUserSession } from "@/shared/api/user/hasUserSession"
+import { hasUserSession } from "@/features/auth/api/hasUserSession"
 import { AUTH_EVENTS } from "@/shared/constants/auth"
 
 const LOGO_HREF = "/"

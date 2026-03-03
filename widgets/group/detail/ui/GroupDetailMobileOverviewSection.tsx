@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Share2, Users } from "lucide-react"
-import { PhotoCarousel } from "@/entities/review/ui/photo-carousel"
-import type { Group } from "@/entities/group/model/mock-data"
+import Image from "next/image";
+import { Share2, Users } from "lucide-react";
+import { PhotoCarousel } from "@/entities/review/ui/photo-carousel";
+import type { Group } from "@/entities/group/model/types";
 import {
   GroupMembershipActionButton,
   getGroupMembershipAction,
   getMembershipStateFromGroupRole,
-} from "@/features/group/detail/ui/GroupMembershipActionButton"
-import { PLACEHOLDERS } from "@/shared/constants/constants"
+} from "@/features/group/detail/ui/GroupMembershipActionButton";
+import { useGroupMembershipAction } from "@/features/group/detail/model/useGroupMembershipAction";
+import { PLACEHOLDERS } from "@/shared/constants/constants";
 
 interface GroupDetailMobileOverviewSectionProps {
-  group: Group
+  group: Group;
 }
 
 export function GroupDetailMobileOverviewSection({
@@ -20,7 +21,21 @@ export function GroupDetailMobileOverviewSection({
 }: GroupDetailMobileOverviewSectionProps) {
   const membershipAction = getGroupMembershipAction(
     getMembershipStateFromGroupRole(group.role)
-  )
+  );
+  const { isJoining, isLeaving, requestJoinGroup, requestLeaveGroup } =
+    useGroupMembershipAction(String(group.groupId));
+  const isJoinAction = membershipAction === "join";
+  const isLeaveAction = membershipAction === "leave";
+  let isMembershipActionDisabled = false;
+  let handleMembershipActionClick: (() => void) | undefined;
+
+  if (isJoinAction) {
+    isMembershipActionDisabled = isJoining;
+    handleMembershipActionClick = () => void requestJoinGroup();
+  } else if (isLeaveAction) {
+    isMembershipActionDisabled = isLeaving;
+    handleMembershipActionClick = () => void requestLeaveGroup();
+  }
 
   return (
     <div className="-mx-4 -mt-8 lg:hidden">
@@ -49,7 +64,12 @@ export function GroupDetailMobileOverviewSection({
               </span>
             </div>
           </div>
-          <GroupMembershipActionButton action={membershipAction} className="shrink-0 px-4 py-1.5" />
+          <GroupMembershipActionButton
+            action={membershipAction}
+            className="shrink-0 px-4 py-1.5"
+            disabled={isMembershipActionDisabled}
+            onClick={handleMembershipActionClick}
+          />
         </div>
 
         <div className="mt-4 border-t border-border pt-4">
@@ -60,5 +80,5 @@ export function GroupDetailMobileOverviewSection({
         </div>
       </div>
     </div>
-  )
+  );
 }
