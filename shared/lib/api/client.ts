@@ -67,8 +67,8 @@ api.interceptors.response.use(
       void import("@/shared/hooks/use-toast").then(({ toast }) => {
         toast({
           variant: "destructive",
-          title: TOAST_MESSAGES.SESSION_EXPIRED.title,
-          description: TOAST_MESSAGES.SESSION_EXPIRED.description,
+          title: TOAST_MESSAGES.AUTH.SESSION_EXPIRED.title,
+          description: TOAST_MESSAGES.AUTH.SESSION_EXPIRED.description,
         });
       });
     }

@@ -91,6 +91,7 @@ export const applyGroupDetailToGroup = (
 
   return {
     ...baseGroup,
+    groupKind: detail.groupKind,
     name: detail.name,
     description: detail.description,
     currentMemberCount: detail.currentMemberCount,

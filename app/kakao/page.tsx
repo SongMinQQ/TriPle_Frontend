@@ -7,6 +7,7 @@ import { toast } from "@/shared/hooks/use-toast";
 import { kakaoOauthLogin } from "@/features/auth/api/kakaoOauthLogin";
 import { consumeOAuthReturnPath } from "@/shared/lib/auth-return-path";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
+import { showErrorToast } from "@/shared/lib/error-toast";
 
 function KakaoCallbackInner() {
   const searchParams = useSearchParams();
@@ -25,8 +26,8 @@ function KakaoCallbackInner() {
     if (!code) {
       toast({
         variant: "destructive",
-        title: TOAST_MESSAGES.LOGIN_FAILURE.title,
-        description: TOAST_MESSAGES.LOGIN_FAILURE.description,
+        title: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.title,
+        description: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.description,
       });
       replaceToReturnPath();
       return;
@@ -36,15 +37,15 @@ function KakaoCallbackInner() {
       try {
         await kakaoOauthLogin(code);
         toast({
-          title: TOAST_MESSAGES.LOGIN_SUCCESS.title,
-          description: TOAST_MESSAGES.LOGIN_SUCCESS.description,
+          title: TOAST_MESSAGES.AUTH.LOGIN_SUCCESS.title,
+          description: TOAST_MESSAGES.AUTH.LOGIN_SUCCESS.description,
         });
       } catch (error) {
         if (!isAxiosError(error) || error.response?.status !== 401) {
-          toast({
-            variant: "destructive",
-            title: TOAST_MESSAGES.LOGIN_FAILURE.title,
-            description: TOAST_MESSAGES.LOGIN_FAILURE.description,
+          showErrorToast({
+            error,
+            title: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.title,
+            fallbackDescription: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.description,
           });
         }
       } finally {

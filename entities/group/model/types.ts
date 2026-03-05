@@ -38,6 +38,7 @@ export interface Review {
 export interface Group {
   id: string;
   groupId: number;
+  groupKind: "PUBLIC" | "PRIVATE" | string;
   name: string;
   description: string;
   image?: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { usePublicGroupsInfiniteQuery } from "@/entities/group/queries/group.queries";
+import { usePublicGroupsInfiniteQuery } from "@/entities/group/queries/usePublicGroupsInfiniteQuery";
 import { useVirtualizedScroll } from "@/shared/hooks/use-virtualized-scroll";
 import InfiniteScrollIndicator from "@/shared/ui/infinite-scroll-indicator";
 import GroupItem from "./ui/GroupItem";

@@ -11,7 +11,7 @@ export const hasUserSession = async (): Promise<boolean> => {
 
   inFlightSessionCheck = (async () => {
     const response = await api.get(REQUEST_PATHS.USERS.ME, {
-      validateStatus: (status) => status === 200 || status === 401,
+      validateStatus: (status) => status === 200 || status === 401 || status === 404,
     });
 
     const isAuthenticated = response.status === 200;

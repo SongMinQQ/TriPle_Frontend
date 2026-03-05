@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import {
   type GroupGenerateOptionalFormState,
@@ -11,16 +11,84 @@ import GroupGenerateOptionalFields from "@/features/group/generate/ui/GroupGener
 import GroupGenerateRequiredFields from "@/features/group/generate/ui/GroupGenerateRequiredFields";
 import GroupGenerateSubmitBtn from "@/features/group/generate/ui/GroupGenerateSubmitBtn";
 
-const GroupGenerateForm = () => {
-  const [requiredForm, setRequiredForm] = useState<GroupGenerateRequiredFormState>({
-    groupName: "",
-    description: "",
-    maxMembers: GROUP_MEMBER_DEFAULT_LIMIT,
-    isPublic: true,
-  });
-  const [optionalForm, setOptionalForm] = useState<GroupGenerateOptionalFormState>({
-    thumbnailFile: null,
-  });
+interface GroupGenerateFormRenderParams {
+  requiredForm: GroupGenerateRequiredFormState;
+  optionalForm: GroupGenerateOptionalFormState;
+  isThumbnailRemoved: boolean;
+}
+
+interface GroupGenerateFormProps {
+  initialRequiredForm?: GroupGenerateRequiredFormState;
+  initialOptionalForm?: GroupGenerateOptionalFormState;
+  initialThumbnailPreviewUrl?: string;
+  renderSubmitButton?: (params: GroupGenerateFormRenderParams) => ReactNode;
+}
+
+const DEFAULT_REQUIRED_FORM: GroupGenerateRequiredFormState = {
+  groupName: "",
+  description: "",
+  maxMembers: GROUP_MEMBER_DEFAULT_LIMIT,
+  isPublic: true,
+};
+
+const DEFAULT_OPTIONAL_FORM: GroupGenerateOptionalFormState = {
+  thumbnailFile: null,
+};
+
+const GroupGenerateForm = ({
+  initialRequiredForm = DEFAULT_REQUIRED_FORM,
+  initialOptionalForm = DEFAULT_OPTIONAL_FORM,
+  initialThumbnailPreviewUrl,
+  renderSubmitButton,
+}: GroupGenerateFormProps) => {
+  const [requiredForm, setRequiredForm] = useState<GroupGenerateRequiredFormState>(
+    initialRequiredForm
+  );
+  const [optionalForm, setOptionalForm] = useState<GroupGenerateOptionalFormState>(
+    initialOptionalForm
+  );
+  const [isThumbnailRemoved, setIsThumbnailRemoved] = useState(false);
+
+  const selectedThumbnailPreviewUrl = useMemo(() => {
+    if (!optionalForm.thumbnailFile) {
+      return null;
+    }
+
+    return URL.createObjectURL(optionalForm.thumbnailFile);
+  }, [optionalForm.thumbnailFile]);
+
+  useEffect(() => {
+    return () => {
+      if (!selectedThumbnailPreviewUrl) {
+        return;
+      }
+
+      URL.revokeObjectURL(selectedThumbnailPreviewUrl);
+    };
+  }, [selectedThumbnailPreviewUrl]);
+
+  const thumbnailPreviewUrl =
+    isThumbnailRemoved ? null : selectedThumbnailPreviewUrl ?? initialThumbnailPreviewUrl ?? null;
+
+  const handleThumbnailFileChange = (thumbnailFile: File | null) => {
+    setOptionalForm((prev) => ({ ...prev, thumbnailFile }));
+
+    if (thumbnailFile) {
+      setIsThumbnailRemoved(false);
+    }
+  };
+
+  const handleThumbnailRemove = () => {
+    setOptionalForm((prev) => ({ ...prev, thumbnailFile: null }));
+    setIsThumbnailRemoved(true);
+  };
+
+  const submitButton =
+    renderSubmitButton?.({
+      requiredForm,
+      optionalForm,
+      isThumbnailRemoved,
+    }) ?? <GroupGenerateSubmitBtn requiredForm={requiredForm} optionalForm={optionalForm} />;
 
   return (
     <Fragment>
@@ -41,13 +109,13 @@ const GroupGenerateForm = () => {
       />
       <GroupGenerateOptionalFields
         form={optionalForm}
-        onThumbnailFileChange={(thumbnailFile) =>
-          setOptionalForm((prev) => ({ ...prev, thumbnailFile }))
-        }
+        previewSrc={thumbnailPreviewUrl}
+        onThumbnailFileChange={handleThumbnailFileChange}
+        onThumbnailRemove={handleThumbnailRemove}
       />
 
       <div className="mt-12 flex justify-center">
-        <GroupGenerateSubmitBtn requiredForm={requiredForm} optionalForm={optionalForm} />
+        {submitButton}
       </div>
     </Fragment>
   );

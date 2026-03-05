@@ -14,6 +14,8 @@ const TEST_GROUP_KIND = "PUBLIC";
 const TEST_IMAGE_PATH = "public/TriPle_logo_sm.png";
 const PENDING_KEY = "uploads/pending/1/TriPle_logo_sm.png";
 const UPLOADED_KEY = "uploads/uploaded/1/TriPle_logo_sm.png";
+const UPLOADED_URL =
+  "https://triple-dev-s3.s3.ap-northeast-2.amazonaws.com/uploads/uploaded/1/TriPle_logo_sm.png";
 const MOCK_PRESIGNED_URL = `${LOCAL_BASE_URL}/mock-presigned-put`;
 const CSRF_STORAGE_KEY = "auth.csrf.token";
 const CSRF_TOKEN = "csrf-token-from-login";
@@ -145,6 +147,7 @@ test.describe("Group create with image upload flow", () => {
             {
               pendingKey: PENDING_KEY,
               uploadedKey: UPLOADED_KEY,
+              uploadedUrl: UPLOADED_URL,
               success: true,
               httpStatus: null,
               message: null,
@@ -184,7 +187,7 @@ test.describe("Group create with image upload flow", () => {
       description: TEST_GROUP_DESCRIPTION,
       memberLimit: TEST_MEMBER_LIMIT,
       groupKind: TEST_GROUP_KIND,
-      thumbNailUrl: UPLOADED_KEY,
+      thumbNailUrl: UPLOADED_URL,
     });
   });
 

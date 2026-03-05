@@ -6,6 +6,7 @@ export interface OAuthLoginRequest {
 }
 
 export interface OAuthLoginResponse {
+  publicUuid?: string;
   nickname: string;
   email: string;
   profileUrl: string;

@@ -10,6 +10,7 @@ import type {
 import { generateGroup } from "@/entities/group/model/api/generateGroup";
 import type { GroupGenerateData } from "@/entities/group/model/api/types";
 import { toast } from "@/shared/hooks/use-toast";
+import { showErrorToast } from "@/shared/lib/error-toast";
 
 interface GroupGenerateSubmitBtnProps {
   requiredForm: GroupGenerateRequiredFormState;
@@ -61,13 +62,10 @@ const GroupGenerateSubmitBtn = ({
 
       router.push(`/group/${response.groupId}`);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "그룹 생성 중 문제가 발생했습니다.";
-
-      toast({
-        variant: "destructive",
+      showErrorToast({
+        error,
         title: "그룹 생성 실패",
-        description: message,
+        fallbackDescription: "그룹 생성 중 문제가 발생했습니다.",
       });
     } finally {
       setIsSubmitting(false);

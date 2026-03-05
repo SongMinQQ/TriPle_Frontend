@@ -20,6 +20,7 @@
 ### 2.3 lint 규칙
 
 - 코드의 마지막엔 항상 세미콜론을 붙힌다.
+- api 예외 처리시 shared/lib/api/error-toast.ts의 showErrorToast 함수를 사용한다. 기본적인 예외 toast 문구는 shared/constants/toast.ts에서 도메인별로 관리한다.
 
 ---
 

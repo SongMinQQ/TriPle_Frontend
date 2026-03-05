@@ -126,6 +126,7 @@ export const mockReviews: Review[] = [
 export const mockGroup: Group = {
   id: "1",
   groupId: 1,
+  groupKind: "PUBLIC",
   name: "즐거운 여행단",
   description: "여행 계획부터 후기 공유까지 함께하는 캐주얼 여행 모임입니다.",
   image: "/trip_group_placeholder.png",

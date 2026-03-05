@@ -1,36 +1,158 @@
 /**
- * Toast 메세지 정의
+ * 토스트 자동 닫힘 지연 시간(ms)
  */
 export const TOAST_AUTO_DISMISS_DELAY = 5000;
+
+/**
+ * 토스트 제거 지연 시간(ms)
+ */
 export const TOAST_REMOVE_DELAY = 400;
 
+/**
+ * 도메인별 토스트 메시지 사전.
+ */
 export const TOAST_MESSAGES = {
-  LOGIN_SUCCESS: {
-    title: "로그인 완료",
-    description: "로그인에 성공했습니다.",
+  /**
+   * 인증(Auth) 도메인 메시지.
+   */
+  AUTH: {
+    /**
+     * 카카오 로그인 성공.
+     */
+    LOGIN_SUCCESS: {
+      title: "로그인 완료",
+      description: "로그인에 성공했습니다.",
+    },
+    /**
+     * 카카오 로그인 실패.
+     */
+    LOGIN_FAILURE: {
+      title: "로그인 실패",
+      description: "잠시 후 다시 시도해 주세요.",
+    },
+    /**
+     * 세션 만료 안내.
+     */
+    SESSION_EXPIRED: {
+      title: "세션 만료",
+      description: "세션이 만료되었습니다. 다시 로그인해 주세요.",
+    },
   },
-  LOGIN_FAILURE: {
-    title: "로그인 실패",
-    description: "잠시 후 다시 시도해 주세요.",
-  },
-  SESSION_EXPIRED: {
-    title: "세션 만료",
-    description: "세션이 만료되었습니다. 다시 로그인해 주세요.",
-  },
-  GROUP_JOIN_REQUEST_SUCCESS: {
-    title: "그룹 가입 신청 완료",
-    description: "그룹 가입 신청이 완료되었습니다.",
-  },
-  GROUP_JOIN_REQUEST_FAILURE: {
-    title: "가입 신청 실패",
-    description: "잠시 후 다시 시도해 주세요.",
-  },
-  GROUP_LEAVE_SUCCESS: {
-    title: "그룹 탈퇴 완료",
-    description: "그룹에서 탈퇴했습니다.",
-  },
-  GROUP_LEAVE_FAILURE: {
-    title: "그룹 탈퇴 실패",
-    description: "잠시 후 다시 시도해 주세요.",
+  /**
+   * 그룹(Group) 도메인 메시지.
+   */
+  GROUP: {
+    /**
+     * 그룹 가입 신청 성공.
+     */
+    JOIN_REQUEST_SUCCESS: {
+      title: "그룹 가입 신청 완료",
+      description: "그룹 가입 신청이 완료되었습니다.",
+    },
+    /**
+     * 그룹 가입 신청 실패.
+     */
+    JOIN_REQUEST_FAILURE: {
+      title: "가입 신청 실패",
+      description: "잠시 후 다시 시도해 주세요.",
+    },
+    /**
+     * 그룹 가입 신청 승인 성공.
+     */
+    JOIN_APPLY_APPROVE_SUCCESS: {
+      title: "가입 신청 승인 완료",
+      description: "선택한 사용자의 가입 신청을 승인했습니다.",
+    },
+    /**
+     * 그룹 가입 신청 승인 실패.
+     */
+    JOIN_APPLY_APPROVE_FAILURE: {
+      title: "가입 신청 승인 실패",
+      description: "가입 신청 승인 중 문제가 발생했습니다.",
+    },
+    /**
+     * 그룹 가입 신청 거절 API 미구현 안내.
+     */
+    JOIN_APPLY_REJECT_NOT_READY: {
+      title: "가입 신청 거절 준비 중",
+      description: "가입 신청 거절 기능은 백엔드 구현 후 제공됩니다.",
+    },
+    /**
+     * 그룹 탈퇴 성공.
+     */
+    LEAVE_SUCCESS: {
+      title: "그룹 탈퇴 완료",
+      description: "그룹에서 탈퇴했습니다.",
+    },
+    /**
+     * 그룹 탈퇴 실패.
+     */
+    LEAVE_FAILURE: {
+      title: "그룹 탈퇴 실패",
+      description: "잠시 후 다시 시도해 주세요.",
+    },
+    /**
+     * 그룹 수정 입력값 검증 실패.
+     */
+    UPDATE_VALIDATION: {
+      title: "입력값을 확인해주세요.",
+      description: "그룹명과 그룹 설명은 필수입니다.",
+    },
+    /**
+     * 그룹 수정 성공.
+     */
+    UPDATE_SUCCESS: {
+      title: "그룹 수정 완료",
+      description: "그룹 정보가 성공적으로 수정되었습니다.",
+    },
+    /**
+     * 그룹 수정 실패.
+     */
+    UPDATE_FAILURE: {
+      title: "그룹 수정 실패",
+      description: "그룹 수정 중 문제가 발생했습니다.",
+    },
+    /**
+     * 그룹 삭제 성공.
+     */
+    DELETE_SUCCESS: {
+      title: "그룹 삭제 완료",
+      description: "그룹이 정상적으로 삭제되었습니다.",
+    },
+    /**
+     * 그룹 삭제 실패.
+     */
+    DELETE_FAILURE: {
+      title: "그룹 삭제 실패",
+      description: "그룹 삭제 중 문제가 발생했습니다.",
+    },
+    /**
+     * 그룹 멤버 추방 성공.
+     */
+    MEMBER_KICK_SUCCESS: {
+      title: "멤버 추방 완료",
+      description: "선택한 멤버를 그룹에서 추방했습니다.",
+    },
+    /**
+     * 그룹 멤버 추방 실패.
+     */
+    MEMBER_KICK_FAILURE: {
+      title: "멤버 추방 실패",
+      description: "멤버 추방 중 문제가 발생했습니다.",
+    },
+    /**
+     * 그룹장 양도 성공.
+     */
+    OWNER_TRANSFER_SUCCESS: {
+      title: "그룹장 양도 완료",
+      description: "그룹장 권한을 성공적으로 양도했습니다.",
+    },
+    /**
+     * 그룹장 양도 실패.
+     */
+    OWNER_TRANSFER_FAILURE: {
+      title: "그룹장 양도 실패",
+      description: "그룹장 양도 중 문제가 발생했습니다.",
+    },
   },
 } as const;

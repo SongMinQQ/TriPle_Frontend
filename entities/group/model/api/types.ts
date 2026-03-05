@@ -14,15 +14,48 @@ export interface GetPublicGroupsResponse {
 }
 
 export interface GetPublicGroupsParams {
+  keyword?: string;
   cursor?: number;
-  size: number;
+  size?: number;
 }
 
-export interface GroupDetailUserDto {
+export interface GroupUserBaseDto {
   name: string;
   description: string;
   profileUrl: string;
   isOwner: boolean;
+}
+
+export interface GroupDetailUserDto extends GroupUserBaseDto {}
+
+export interface GroupMemberDto extends GroupUserBaseDto {
+  id: string;
+}
+
+export interface GetGroupMembersResponse {
+  users: GroupMemberDto[];
+}
+
+export type GroupJoinApplyStatus = "PENDING" | "APPROVED" | "REJECTED" | string;
+
+export interface GroupJoinApplyUserDto {
+  joinApplyId: number;
+  nickname: string;
+  description: string;
+  profileUrl: string;
+  status: GroupJoinApplyStatus;
+}
+
+export interface GetGroupJoinAppliesResponse {
+  users: GroupJoinApplyUserDto[];
+  nextCursor: number | null;
+  hasNext: boolean;
+}
+
+export interface GetGroupJoinAppliesParams {
+  status?: GroupJoinApplyStatus;
+  cursor?: number;
+  size?: number;
 }
 
 export interface GroupDetailRecentPhotoDto {
@@ -85,3 +118,23 @@ export interface GroupGenerateData {
 export interface GroupGenerateResponse {
   groupId: number;
 }
+
+export interface GroupUpdateData {
+  name: string;
+  description: string;
+  memberLimit: number;
+  groupKind: string;
+  thumbNailUrl: string;
+}
+
+export interface GroupUpdateResponse {
+  groupId: number;
+  groupKind: string;
+  name: string;
+  description: string;
+  thumbNailUrl: string;
+  memberLimit: number;
+  currentMemberCount: number;
+}
+
+export type GroupDeleteResponse = Record<string, never>;

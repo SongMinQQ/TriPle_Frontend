@@ -9,17 +9,21 @@ interface UploadPresignRequest {
   }>;
 }
 
+interface UploadPresignItem {
+  fileName: string;
+  mimeType: string;
+  key: string;
+  presignedUrl: string;
+  expiresAt: string;
+  success?: boolean;
+  errorCode?: number | string | null;
+  message?: string | null;
+}
+
 interface UploadPresignResponse {
-  presignedUrlResponseDtos: Array<{
-    fileName: string;
-    mimeType: string;
-    key: string;
-    presignedUrl: string;
-    expiresAt: string;
-    success: boolean;
-    errorCode: string | null;
-    message: string | null;
-  }>;
+  presignedUrlResponses?: UploadPresignItem[];
+  // Backward compatibility for legacy response shape.
+  presignedUrlResponseDtos?: UploadPresignItem[];
 }
 
 interface UploadCompleteRequest {
@@ -27,12 +31,13 @@ interface UploadCompleteRequest {
 }
 
 interface UploadCompleteResponse {
-  uploadResults: Array<{
+  uploadResults?: Array<{
     pendingKey: string;
     uploadedKey: string;
-    success: boolean;
-    httpStatus: number | null;
-    message: string | null;
+    uploadedUrl?: string;
+    success?: boolean;
+    httpStatus?: number | string | null;
+    message?: string | null;
   }>;
 }
 
@@ -51,8 +56,16 @@ export const uploadFile = async (file: File): Promise<string> => {
     presignRequest
   );
 
-  const presigned = presignData.presignedUrlResponseDtos[0];
-  if (!presigned || !presigned.success || !presigned.presignedUrl || !presigned.key) {
+  const presignedResponses =
+    presignData.presignedUrlResponses ?? presignData.presignedUrlResponseDtos ?? [];
+  const presigned = presignedResponses[0];
+
+  if (
+    !presigned ||
+    presigned.success === false ||
+    !presigned.presignedUrl ||
+    !presigned.key
+  ) {
     throw new Error(presigned?.message ?? "Failed to issue upload presigned URL.");
   }
 
@@ -68,13 +81,19 @@ export const uploadFile = async (file: File): Promise<string> => {
     completeRequest
   );
 
+  const uploadResults = completeData.uploadResults ?? [];
   const uploadResult =
-    completeData.uploadResults.find((result) => result.pendingKey === presigned.key) ??
-    completeData.uploadResults[0];
+    uploadResults.find((result) => result.pendingKey === presigned.key) ??
+    uploadResults[0];
 
-  if (!uploadResult || !uploadResult.success || !uploadResult.uploadedKey) {
+  if (
+    !uploadResult ||
+    uploadResult.success === false ||
+    !uploadResult.uploadedKey ||
+    !uploadResult.uploadedUrl
+  ) {
     throw new Error(uploadResult?.message ?? "Failed to finalize uploaded file.");
   }
 
-  return uploadResult.uploadedKey;
+  return uploadResult.uploadedUrl;
 };

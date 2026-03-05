@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { useGroupDetailQuery } from "@/entities/group/queries/group.queries"
+import { useGroupDetailQuery } from "@/entities/group/queries/useGroupDetailQuery"
 import { GroupDetailReviewPhotosSection } from "@/widgets/group/detail/ui/GroupDetailReviewPhotosSection"
 import { GroupDetailMembersSection } from "@/widgets/group/detail/ui/GroupDetailMembersSection"
 import { GroupDetailSchedulesSection } from "@/widgets/group/detail/ui/GroupDetailSchedulesSection"

@@ -6,12 +6,16 @@ import { LabeledFileSelectButtonField } from "@/shared/ui/labeled-form-fields";
 
 interface GroupGenerateOptionalFieldsProps {
   form: GroupGenerateOptionalFormState;
+  previewSrc?: string | null;
   onThumbnailFileChange: (thumbnailFile: File | null) => void;
+  onThumbnailRemove: () => void;
 }
 
 const GroupGenerateOptionalFields = ({
   form,
+  previewSrc,
   onThumbnailFileChange,
+  onThumbnailRemove,
 }: GroupGenerateOptionalFieldsProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -22,6 +26,14 @@ const GroupGenerateOptionalFields = ({
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const nextFile = event.target.files?.[0] ?? null;
     onThumbnailFileChange(nextFile);
+  };
+
+  const handleRemoveClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    onThumbnailRemove();
   };
 
   return (
@@ -44,6 +56,25 @@ const GroupGenerateOptionalFields = ({
         data-testid="group-image-input"
         onChange={handleImageChange}
       />
+
+      {previewSrc ? (
+        <div className="mt-4 flex items-center gap-3">
+          <div className="h-[100px] w-[100px] overflow-hidden rounded-xl border border-border">
+            <img
+              src={previewSrc}
+              alt="그룹 이미지 미리보기"
+              className="h-[100px] w-[100px] object-cover"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleRemoveClick}
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            이미지 제거
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 };

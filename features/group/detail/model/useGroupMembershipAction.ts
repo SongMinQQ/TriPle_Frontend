@@ -6,21 +6,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { joinGroup } from "@/entities/group/model/api/joinGroup";
 import { leaveGroup } from "@/entities/group/model/api/leaveGroup";
-import { GROUP_QUERY_KEYS } from "@/entities/group/queries/group.queries";
+import { GROUP_QUERY_KEYS } from "@/entities/group/queries/group.query-keys";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
 import { toast } from "@/shared/hooks/use-toast";
+import { showErrorToast } from "@/shared/lib/error-toast";
 
 const isValidGroupId = (groupId: number): boolean =>
   Number.isFinite(groupId) && groupId > 0;
-
-const getErrorMessage = (data: unknown): string | null => {
-  if (!data || typeof data !== "object") {
-    return null;
-  }
-
-  const record = data as Record<string, unknown>;
-  return typeof record.message === "string" ? record.message : null;
-};
 
 /**
  * 그룹 상세 화면의 멤버십 액션(가입 신청/탈퇴)을 처리하는 커스텀 훅.
@@ -58,8 +50,8 @@ export const useGroupMembershipAction = (routeGroupId: string) => {
       await joinGroup(groupId);
 
       toast({
-        title: TOAST_MESSAGES.GROUP_JOIN_REQUEST_SUCCESS.title,
-        description: TOAST_MESSAGES.GROUP_JOIN_REQUEST_SUCCESS.description,
+        title: TOAST_MESSAGES.GROUP.JOIN_REQUEST_SUCCESS.title,
+        description: TOAST_MESSAGES.GROUP.JOIN_REQUEST_SUCCESS.description,
       });
 
       await invalidateGroupQueries();
@@ -70,18 +62,20 @@ export const useGroupMembershipAction = (routeGroupId: string) => {
         }
 
         if (error.response?.status === 409) {
-          toast({
+          showErrorToast({
+            error,
             title: "가입 신청 안내",
-            description: getErrorMessage(error.response.data) ?? "이미 가입이 요청된 그룹입니다.",
+            fallbackDescription: "이미 가입이 요청된 그룹입니다.",
+            variant: "default",
           });
           return;
         }
       }
 
-      toast({
-        variant: "destructive",
-        title: TOAST_MESSAGES.GROUP_JOIN_REQUEST_FAILURE.title,
-        description: TOAST_MESSAGES.GROUP_JOIN_REQUEST_FAILURE.description,
+      showErrorToast({
+        error,
+        title: TOAST_MESSAGES.GROUP.JOIN_REQUEST_FAILURE.title,
+        fallbackDescription: TOAST_MESSAGES.GROUP.JOIN_REQUEST_FAILURE.description,
       });
     } finally {
       setIsJoining(false);
@@ -100,8 +94,8 @@ export const useGroupMembershipAction = (routeGroupId: string) => {
       await leaveGroup(groupId);
 
       toast({
-        title: TOAST_MESSAGES.GROUP_LEAVE_SUCCESS.title,
-        description: TOAST_MESSAGES.GROUP_LEAVE_SUCCESS.description,
+        title: TOAST_MESSAGES.GROUP.LEAVE_SUCCESS.title,
+        description: TOAST_MESSAGES.GROUP.LEAVE_SUCCESS.description,
       });
 
       await invalidateGroupQueries();
@@ -111,12 +105,10 @@ export const useGroupMembershipAction = (routeGroupId: string) => {
         return;
       }
 
-      toast({
-        variant: "destructive",
-        title: TOAST_MESSAGES.GROUP_LEAVE_FAILURE.title,
-        description: getErrorMessage(
-          isAxiosError(error) ? error.response?.data : undefined
-        ) ?? TOAST_MESSAGES.GROUP_LEAVE_FAILURE.description,
+      showErrorToast({
+        error,
+        title: TOAST_MESSAGES.GROUP.LEAVE_FAILURE.title,
+        fallbackDescription: TOAST_MESSAGES.GROUP.LEAVE_FAILURE.description,
       });
     } finally {
       setIsLeaving(false);
