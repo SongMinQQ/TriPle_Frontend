@@ -155,4 +155,10 @@ export const TOAST_MESSAGES = {
       description: "그룹장 양도 중 문제가 발생했습니다.",
     },
   },
+  SCHEDULE: {
+    LIST_FAILURE: {
+      title: "여행 일정 조회 실패",
+      description: "여행 일정 목록을 불러오는 중 문제가 발생했습니다.",
+    },
+  },
 } as const;

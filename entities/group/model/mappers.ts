@@ -3,44 +3,50 @@ import type {
   GroupDetailRecentPhotoDto,
   GroupDetailRecentReviewDto,
   GroupDetailRecentTravelDto,
-} from "@/entities/group/model/api/types"
-import type { Group, Review, ReviewPhoto, Schedule } from "./types"
+} from "@/entities/group/model/api/types";
 import {
   calculateInclusiveDayCountFromIsoDates,
   formatIsoDateToDot,
   formatIsoDateToShort,
-} from "./date.utils"
+} from "@/shared/lib/date";
 import {
   GROUP_REVIEW_TITLE_ELLIPSIS,
   GROUP_REVIEW_TITLE_MAX_LENGTH,
-} from "./constants"
+} from "./constants";
+import type { Group, Review, ReviewPhoto, Schedule } from "./types";
 
 const createReviewTitle = (content: string): string => {
-  const trimmed = content.trim()
+  const trimmed = content.trim();
   if (!trimmed) {
-    return "Review"
+    return "Review";
   }
 
   if (trimmed.length <= GROUP_REVIEW_TITLE_MAX_LENGTH) {
-    return trimmed
+    return trimmed;
   }
 
-  const slicedLength = GROUP_REVIEW_TITLE_MAX_LENGTH - GROUP_REVIEW_TITLE_ELLIPSIS.length
+  const slicedLength =
+    GROUP_REVIEW_TITLE_MAX_LENGTH - GROUP_REVIEW_TITLE_ELLIPSIS.length;
   if (slicedLength <= 0) {
-    return trimmed.slice(0, GROUP_REVIEW_TITLE_MAX_LENGTH)
+    return trimmed.slice(0, GROUP_REVIEW_TITLE_MAX_LENGTH);
   }
 
-  return `${trimmed.slice(0, slicedLength)}${GROUP_REVIEW_TITLE_ELLIPSIS}`
-}
+  return `${trimmed.slice(0, slicedLength)}${GROUP_REVIEW_TITLE_ELLIPSIS}`;
+};
 
-const mapRecentTravelToSchedule = (travel: GroupDetailRecentTravelDto): Schedule => ({
+const mapRecentTravelToSchedule = (
+  travel: GroupDetailRecentTravelDto
+): Schedule => ({
   id: String(travel.travelItineraryId),
   title: travel.title,
   startDate: formatIsoDateToDot(travel.startAt),
   endDate: formatIsoDateToDot(travel.endAt),
   memberCount: travel.memberCount,
-  dayCount: calculateInclusiveDayCountFromIsoDates(travel.startAt, travel.endAt),
-})
+  dayCount: calculateInclusiveDayCountFromIsoDates(
+    travel.startAt,
+    travel.endAt
+  ),
+});
 
 const mapRecentReviewToReview = (review: GroupDetailRecentReviewDto): Review => ({
   id: String(review.reviewId),
@@ -52,7 +58,7 @@ const mapRecentReviewToReview = (review: GroupDetailRecentReviewDto): Review => 
   thumbnail: review.imageUrl,
   content: review.content,
   photo: review.imageUrl,
-})
+});
 
 const mapRecentPhotoToReviewPhoto = (
   photo: GroupDetailRecentPhotoDto,
@@ -61,7 +67,7 @@ const mapRecentPhotoToReviewPhoto = (
   id: String(photo.imageId),
   src: photo.imageUrl,
   alt: `Recent photo ${index + 1}`,
-})
+});
 
 export const applyGroupDetailToGroup = (
   baseGroup: Group,
@@ -75,19 +81,19 @@ export const applyGroupDetailToGroup = (
         avatar: user.profileUrl || undefined,
         isLeader: user.isOwner,
       }))
-    : baseGroup.members
+    : baseGroup.members;
 
   const schedules = Array.isArray(detail.recentTravels)
     ? detail.recentTravels.map(mapRecentTravelToSchedule)
-    : baseGroup.schedules
+    : baseGroup.schedules;
 
   const reviews = Array.isArray(detail.recentReviews)
     ? detail.recentReviews.map(mapRecentReviewToReview)
-    : baseGroup.reviews
+    : baseGroup.reviews;
 
   const reviewPhotos = Array.isArray(detail.recentPhotos)
     ? detail.recentPhotos.map(mapRecentPhotoToReviewPhoto)
-    : baseGroup.reviewPhotos
+    : baseGroup.reviewPhotos;
 
   return {
     ...baseGroup,
@@ -103,5 +109,5 @@ export const applyGroupDetailToGroup = (
     schedules,
     reviews,
     reviewPhotos,
-  }
-}
+  };
+};

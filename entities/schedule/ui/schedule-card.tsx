@@ -1,28 +1,50 @@
-﻿import Link from "next/link"
-import { Calendar, Users, Lock } from "lucide-react"
-import type { Schedule } from "@/entities/group/model/types"
+import Link from "next/link";
+import { Calendar, Lock, Users } from "lucide-react";
+import type { Schedule } from "@/entities/group/model/types";
 
 interface ScheduleCardProps {
-  schedule: Schedule
-  showLockMessage?: boolean
-  groupId?: string
+  schedule?: Schedule;
+  isLocked?: boolean;
+  groupId?: string | number;
 }
 
-export function ScheduleCard({ schedule, showLockMessage = false, groupId = "1" }: ScheduleCardProps) {
-  return (
-    <Link
-      href={`/group/${groupId}/schedules/${schedule.id}`}
-      className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 transition-shadow hover:shadow-sm"
-    >
-      {/* Calendar icon */}
+const LOCK_MESSAGE =
+  "그룹 멤버에게만 공개된 일정입니다. 그룹에 가입하고 여행을 떠나세요!";
+
+export function ScheduleCard({
+  schedule,
+  isLocked = false,
+  groupId,
+}: ScheduleCardProps) {
+  if (isLocked) {
+    return (
+      <div
+        data-testid="schedule-lock-message"
+        className="rounded-xl border border-dashed border-border bg-muted/20 p-4"
+      >
+        <div className="flex items-start gap-3 text-muted-foreground">
+          <div className="rounded-full bg-background p-2">
+            <Lock className="h-4 w-4 shrink-0" />
+          </div>
+          <p className="text-sm leading-relaxed">{LOCK_MESSAGE}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!schedule) {
+    return null;
+  }
+
+  const content = (
+    <>
       <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg bg-muted">
         <Calendar className="h-4 w-4 text-muted-foreground" />
         <span className="text-xs font-bold text-foreground">{schedule.dayCount}</span>
       </div>
 
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-semibold text-foreground truncate">{schedule.title}</h4>
+      <div className="min-w-0 flex-1">
+        <h4 className="truncate text-sm font-semibold text-foreground">{schedule.title}</h4>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {schedule.startDate} ~ {schedule.endDate}
         </p>
@@ -31,14 +53,31 @@ export function ScheduleCard({ schedule, showLockMessage = false, groupId = "1" 
           <span>{schedule.memberCount}</span>
         </div>
       </div>
+    </>
+  );
 
-      {/* Lock message */}
-      {showLockMessage && (
-        <div className="hidden items-center gap-2 text-xs text-muted-foreground lg:flex">
-          <Lock className="h-4 w-4 shrink-0" />
-          <p className="leading-relaxed">{"그룹 멤버에게만 공개된 일정입니다. 그룹에 가입하고 여행을 떠나세요!"}</p>
-        </div>
-      )}
+  const className =
+    "flex items-start gap-4 rounded-xl border border-border bg-background p-4";
+  const href =
+    schedule.id && groupId
+      ? `/group/${groupId}/schedules/${schedule.id}`
+      : null;
+
+  if (!href) {
+    return (
+      <article data-testid="schedule-card" className={className}>
+        {content}
+      </article>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      data-testid="schedule-card"
+      className={`${className} transition-shadow hover:shadow-sm`}
+    >
+      {content}
     </Link>
-  )
+  );
 }

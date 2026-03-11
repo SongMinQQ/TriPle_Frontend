@@ -1,15 +1,19 @@
-import { CalendarRange } from "lucide-react"
-import type { Group } from "@/entities/group/model/types"
-import { ScheduleCard } from "@/entities/schedule/ui/schedule-card"
-import { GroupDetailEmptyState } from "@/widgets/group/detail/ui/GroupDetailEmptyState"
-import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader"
+import { CalendarRange } from "lucide-react";
+import type { Group } from "@/entities/group/model/types";
+import { ScheduleCard } from "@/entities/schedule/ui/schedule-card";
+import { getMembershipStateFromGroupRole } from "@/features/group/detail/lib/groupMembershipAction";
+import { GroupDetailEmptyState } from "@/widgets/group/detail/ui/GroupDetailEmptyState";
+import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader";
 
 interface GroupDetailSchedulesSectionProps {
-  group: Group
+  group: Group;
 }
 
-export function GroupDetailSchedulesSection({ group }: GroupDetailSchedulesSectionProps) {
-  const hasSchedules = group.schedules.length > 0
+export function GroupDetailSchedulesSection({
+  group,
+}: GroupDetailSchedulesSectionProps) {
+  const hasSchedules = group.schedules.length > 0;
+  const isGuest = getMembershipStateFromGroupRole(group.role) === "guest";
 
   return (
     <section>
@@ -22,7 +26,12 @@ export function GroupDetailSchedulesSection({ group }: GroupDetailSchedulesSecti
       {hasSchedules ? (
         <div className="mt-4 flex flex-col gap-3">
           {group.schedules.map((schedule) => (
-            <ScheduleCard key={schedule.id} schedule={schedule} showLockMessage groupId={group.id} />
+            <ScheduleCard
+              key={schedule.id}
+              schedule={schedule}
+              isLocked={isGuest}
+              groupId={group.id}
+            />
           ))}
         </div>
       ) : (
@@ -33,5 +42,5 @@ export function GroupDetailSchedulesSection({ group }: GroupDetailSchedulesSecti
         />
       )}
     </section>
-  )
+  );
 }

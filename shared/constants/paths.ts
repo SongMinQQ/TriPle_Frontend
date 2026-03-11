@@ -23,6 +23,9 @@ export const REQUEST_PATHS = {
       `/groups/${groupId}/join-applies/${joinApplyId}`,
     LEAVE: (groupId: number) => `/groups/${groupId}/users/me`,
   },
+  TRAVELS: {
+    LIST: (groupId: number) => `/travels/${groupId}`,
+  },
   USERS: {
     ME: "/users/me",
   },

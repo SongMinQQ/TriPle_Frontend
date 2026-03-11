@@ -1,36 +1,61 @@
-﻿import Link from "next/link"
-import { mockGroup } from "@/entities/group/model/mock-data"
-import { ScheduleCard } from "@/entities/schedule/ui/schedule-card"
+"use client";
 
-export default async function SchedulesPage() {
-  const group = mockGroup
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useGroupDetailQuery } from "@/entities/group/queries/useGroupDetailQuery";
+import { getMembershipStateFromGroupRole } from "@/features/group/detail/lib/groupMembershipAction";
+import { GroupSchedulesContent } from "@/features/schedule/list/ui/GroupSchedulesContent";
+import { ScheduleCreateButton } from "@/features/schedule/create/ui/ScheduleCreateButton";
+import { GroupDetailQueryErrorState } from "@/widgets/group/detail/ui/GroupDetailQueryErrorState";
+import { GroupDetailSectionHeader } from "@/widgets/group/detail/ui/GroupDetailSectionHeader";
+
+const getRouteGroupId = (id: string | string[] | undefined): string =>
+  Array.isArray(id) ? id[0] ?? "" : id ?? "";
+
+export default function SchedulesPage() {
+  const params = useParams<{ id: string }>();
+  const routeGroupId = getRouteGroupId(params?.id);
+  const {
+    data: group,
+    isError: isGroupError,
+    refetch: refetchGroup,
+  } = useGroupDetailQuery(routeGroupId);
+  const [scheduleCount, setScheduleCount] = useState(0);
+  const isGuest = getMembershipStateFromGroupRole(group?.role) === "guest";
+
+  useEffect(() => {
+    if (!group) {
+      return;
+    }
+
+    setScheduleCount(group.schedules.length);
+  }, [group]);
+
+  if (isGroupError) {
+    return <GroupDetailQueryErrorState onRetry={() => void refetchGroup()} />;
+  }
+
+  if (!group) {
+    return null;
+  }
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-foreground">
-        {"여행 일정"}{" "}
-        <span className="text-primary">{group.schedules.length}</span>
-      </h1>
+      <GroupDetailSectionHeader title="여행 일정" count={scheduleCount} />
 
-      <div className="mt-6 flex flex-col gap-3">
-        {group.schedules.map((schedule) => (
-          <ScheduleCard
-            key={schedule.id}
-            schedule={schedule}
-            showLockMessage
-            groupId={group.id}
-          />
-        ))}
-      </div>
+      <GroupSchedulesContent
+        groupId={group.id}
+        numericGroupId={group.groupId}
+        fallbackSchedules={group.schedules}
+        isGuest={isGuest}
+        onCountChange={setScheduleCount}
+      />
 
-      <div className="mt-8 flex justify-end">
-        <Link
-          href={`/group/${group.id}/schedules/create`}
-          className="rounded-full bg-primary px-8 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-        >
-          {"일정 생성"}
-        </Link>
-      </div>
+      {!isGuest ? (
+        <div className="mt-8 flex justify-end">
+          <ScheduleCreateButton groupId={group.id} />
+        </div>
+      ) : null}
     </div>
-  )
+  );
 }
