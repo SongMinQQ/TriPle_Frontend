@@ -24,6 +24,7 @@ export const REQUEST_PATHS = {
     LEAVE: (groupId: number) => `/groups/${groupId}/users/me`,
   },
   TRAVELS: {
+    CREATE: "/travels",
     LIST: (groupId: number) => `/travels/${groupId}`,
   },
   USERS: {

@@ -25,3 +25,16 @@ export interface GetGroupSchedulesParams {
   size?: number;
   cursor?: number;
 }
+
+export interface CreateScheduleRequest {
+  title: string;
+  startAt: string;
+  endAt: string;
+  groupId: number;
+  description: string;
+  memberUuids: string[];
+}
+
+export interface CreateScheduleResponse {
+  itineraryId: number;
+}

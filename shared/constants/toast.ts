@@ -156,6 +156,18 @@ export const TOAST_MESSAGES = {
     },
   },
   SCHEDULE: {
+    CREATE_VALIDATION: {
+      title: "입력값을 확인해주세요.",
+      description: "일정명, 날짜, 일정 멤버를 확인해 주세요.",
+    },
+    CREATE_SUCCESS: {
+      title: "여행 일정 생성 완료",
+      description: "새 여행 일정이 생성되었습니다.",
+    },
+    CREATE_FAILURE: {
+      title: "여행 일정 생성 실패",
+      description: "여행 일정 생성 중 문제가 발생했습니다.",
+    },
     LIST_FAILURE: {
       title: "여행 일정 조회 실패",
       description: "여행 일정 목록을 불러오는 중 문제가 발생했습니다.",
