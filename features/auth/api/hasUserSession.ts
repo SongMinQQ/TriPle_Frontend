@@ -1,5 +1,6 @@
 import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
+import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
 import { clearCsrfToken } from "@/shared/lib/csrf-token";
 
 let inFlightSessionCheck: Promise<boolean> | null = null;
@@ -19,6 +20,8 @@ export const hasUserSession = async (): Promise<boolean> => {
     if (!isAuthenticated) {
       clearCsrfToken();
     }
+
+    setAuthSessionHint(isAuthenticated);
 
     return isAuthenticated;
   })();

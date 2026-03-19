@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AUTH_EVENTS } from "@/shared/constants/auth";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
+import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
 import {
   clearCsrfToken,
   CSRF_TOKEN_HEADER,
@@ -62,6 +63,7 @@ api.interceptors.response.use(
 
     if (error?.response?.status === 401 && typeof window !== "undefined") {
       clearCsrfToken();
+      setAuthSessionHint(false);
       window.dispatchEvent(new CustomEvent(AUTH_EVENTS.SESSION_EXPIRED));
 
       void import("@/shared/hooks/use-toast").then(({ toast }) => {

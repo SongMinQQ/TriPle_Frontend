@@ -38,6 +38,20 @@ export const TOAST_MESSAGES = {
       description: "세션이 만료되었습니다. 다시 로그인해 주세요.",
     },
   },
+  USER: {
+    PROFILE_UPDATE_SUCCESS: {
+      title: "프로필 수정 완료",
+      description: "프로필 정보가 성공적으로 수정되었습니다.",
+    },
+    PROFILE_UPDATE_FAILURE: {
+      title: "프로필 수정 실패",
+      description: "프로필 수정 중 문제가 발생했습니다.",
+    },
+    PROFILE_IMAGE_UPLOAD_FAILURE: {
+      title: "프로필 이미지 업로드 실패",
+      description: "이미지 업로드 중 문제가 발생했습니다.",
+    },
+  },
   /**
    * 그룹(Group) 도메인 메시지.
    */

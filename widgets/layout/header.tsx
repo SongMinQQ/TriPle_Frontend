@@ -7,6 +7,7 @@ import { UserRound } from "lucide-react"
 import KakaoLoginBtn from "@/features/auth/KakaoLoginBtn"
 import { hasUserSession } from "@/features/auth/api/hasUserSession"
 import { AUTH_EVENTS } from "@/shared/constants/auth"
+import { getAuthSessionHint } from "@/shared/lib/auth-session-hint"
 
 const LOGO_HREF = "/"
 const NAV_LINKS = [
@@ -20,6 +21,8 @@ export function Header() {
 
   useEffect(() => {
     let mounted = true
+    const hintedSession = getAuthSessionHint()
+
     const handleSessionExpired = () => {
       if(mounted){
         setHasSession(false)
@@ -39,7 +42,12 @@ export function Header() {
       }
     }
 
-    void syncSession()
+    if (hintedSession === false) {
+      setHasSession(false)
+    } else {
+      void syncSession()
+    }
+
     window.addEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired)
 
     return () => {

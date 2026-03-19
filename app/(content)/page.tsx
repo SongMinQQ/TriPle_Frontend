@@ -1,14 +1,11 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Header } from "@/widgets/layout/header"
-import { Footer } from "@/widgets/layout/footer"
-import GroupList from "@/features/main/GroupList"
+import Image from "next/image";
+import Link from "next/link";
+
+import GroupList from "@/features/main/GroupList";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
+    <main>
       {/* Hero Section */}
       <section className="relative h-[420px] w-full overflow-hidden lg:h-[480px]">
         <Image
@@ -31,8 +28,7 @@ export default function LandingPage() {
           </Link>
         </div>
       </section>
-      <GroupList/>
-      <Footer />
-    </div>
-  )
+      <GroupList />
+    </main>
+  );
 }

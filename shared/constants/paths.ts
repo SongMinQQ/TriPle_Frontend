@@ -28,6 +28,8 @@ export const REQUEST_PATHS = {
     LIST: (groupId: number) => `/travels/${groupId}`,
   },
   USERS: {
+    ROOT: "/users",
     ME: "/users/me",
+    DETAIL: (userId: string) => `/users/${encodeURIComponent(userId)}`,
   },
 } as const;

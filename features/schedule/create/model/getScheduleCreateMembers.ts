@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import type { GetGroupMembersResponse, GroupMemberDto } from "@/entities/group/model/api/types";
-import type { GetMyProfileResponse } from "@/features/auth/api/types";
+import type { GetMyProfileResponse } from "@/entities/user/model/api/types";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 
 interface ScheduleCreateInitialData {

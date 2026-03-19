@@ -11,12 +11,3 @@ export interface OAuthLoginResponse {
   email: string;
   profileUrl: string;
 }
-
-export interface GetMyProfileResponse {
-  publicUuid: string;
-  nickname: string;
-  gender: string;
-  birth: string;
-  description: string;
-  profileUrl: string;
-}

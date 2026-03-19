@@ -7,6 +7,7 @@ import { toast } from "@/shared/hooks/use-toast";
 import { kakaoOauthLogin } from "@/features/auth/api/kakaoOauthLogin";
 import { consumeOAuthReturnPath } from "@/shared/lib/auth-return-path";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
+import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
 import { showErrorToast } from "@/shared/lib/error-toast";
 
 function KakaoCallbackInner() {
@@ -36,6 +37,7 @@ function KakaoCallbackInner() {
     const loginWithOAuthCode = async () => {
       try {
         await kakaoOauthLogin(code);
+        setAuthSessionHint(true);
         toast({
           title: TOAST_MESSAGES.AUTH.LOGIN_SUCCESS.title,
           description: TOAST_MESSAGES.AUTH.LOGIN_SUCCESS.description,
