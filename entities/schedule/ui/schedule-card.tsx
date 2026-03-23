@@ -20,9 +20,9 @@ export function ScheduleCard({
     return (
       <div
         data-testid="schedule-lock-message"
-        className="rounded-xl border border-dashed border-border bg-muted/20 p-4"
+        className="flex min-h-20 items-center rounded-xl border border-dashed border-border bg-muted/20 p-4"
       >
-        <div className="flex items-start gap-3 text-muted-foreground">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <div className="rounded-full bg-background p-2">
             <Lock className="h-4 w-4 shrink-0" />
           </div>

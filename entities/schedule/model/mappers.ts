@@ -4,8 +4,10 @@ import {
   formatIsoDateToDot,
 } from "@/shared/lib/date";
 import type {
+  GetScheduleMetaResponse,
   GetGroupSchedulesResponse,
   GroupScheduleListItemDto,
+  ScheduleMetaMemberDto,
 } from "./api/types";
 
 export interface GroupSchedulesViewData {
@@ -13,6 +15,18 @@ export interface GroupSchedulesViewData {
   count: number;
   nextCursor: number | null;
   hasNext: boolean;
+}
+
+export interface ScheduleMetaMemberViewData {
+  id: string;
+  name: string;
+  avatar?: string;
+  isLeader: boolean;
+}
+
+export interface ScheduleMetaViewData {
+  schedule: Pick<Schedule, "title" | "startDate" | "endDate">;
+  members: ScheduleMetaMemberViewData[];
 }
 
 const resolveScheduleId = (schedule: GroupScheduleListItemDto): string => {
@@ -48,4 +62,27 @@ export const mapGroupSchedulesResponse = (
   nextCursor:
     typeof response.nextCursor === "number" ? response.nextCursor : null,
   hasNext: response.hasNext === true,
+});
+
+const mapScheduleMetaMember = (
+  member: ScheduleMetaMemberDto,
+  index: number
+): ScheduleMetaMemberViewData => ({
+  id: `schedule-member-${index}-${member.nickname}`,
+  name: member.nickname,
+  avatar: member.profileUrl || undefined,
+  isLeader: member.userRole === "LEADER",
+});
+
+export const mapScheduleMetaResponse = (
+  response: GetScheduleMetaResponse
+): ScheduleMetaViewData => ({
+  schedule: {
+    title: response.title,
+    startDate: formatIsoDateToDot(response.startAt),
+    endDate: formatIsoDateToDot(response.endAt),
+  },
+  members: Array.isArray(response.members)
+    ? response.members.map(mapScheduleMetaMember)
+    : [],
 });

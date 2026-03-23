@@ -26,6 +26,7 @@ export const REQUEST_PATHS = {
   TRAVELS: {
     CREATE: "/travels",
     LIST: (groupId: number) => `/travels/${groupId}`,
+    DETAIL_INFO: (travelId: number) => `/travels/${travelId}/info`,
   },
   USERS: {
     ROOT: "/users",

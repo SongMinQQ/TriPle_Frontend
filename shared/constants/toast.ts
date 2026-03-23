@@ -186,5 +186,9 @@ export const TOAST_MESSAGES = {
       title: "여행 일정 조회 실패",
       description: "여행 일정 목록을 불러오는 중 문제가 발생했습니다.",
     },
+    DETAIL_FAILURE: {
+      title: "여행 메타 정보 조회 실패",
+      description: "여행 메타 정보를 불러오는 중 문제가 발생했습니다.",
+    },
   },
 } as const;

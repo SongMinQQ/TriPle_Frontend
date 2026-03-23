@@ -38,3 +38,18 @@ export interface CreateScheduleRequest {
 export interface CreateScheduleResponse {
   itineraryId: number;
 }
+
+export type ScheduleMetaMemberRole = "LEADER" | "MEMBER" | string;
+
+export interface ScheduleMetaMemberDto {
+  nickname: string;
+  profileUrl: string;
+  userRole: ScheduleMetaMemberRole;
+}
+
+export interface GetScheduleMetaResponse {
+  title: string;
+  startAt: string;
+  endAt: string;
+  members: ScheduleMetaMemberDto[];
+}
