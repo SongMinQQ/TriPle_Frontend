@@ -1,6 +1,7 @@
 export const REQUEST_PATHS = {
   AUTH: {
     LOGIN: "/auth/login",
+    REFRESH: "/auth/refresh",
     LOGOUT: "/auth/logout",
   },
   FILES: {
@@ -21,6 +22,8 @@ export const REQUEST_PATHS = {
     JOIN_APPLIES: (groupId: number) => `/groups/${groupId}/join-applies`,
     APPROVE_JOIN_APPLY: (groupId: number, joinApplyId: number) =>
       `/groups/${groupId}/join-applies/${joinApplyId}`,
+    REJECT_JOIN_APPLY: (groupId: number, joinApplyId: number) =>
+      `/groups/${groupId}/join-applies/${joinApplyId}/reject`,
     LEAVE: (groupId: number) => `/groups/${groupId}/users/me`,
   },
   TRAVELS: {

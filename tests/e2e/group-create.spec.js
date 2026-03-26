@@ -17,15 +17,15 @@ const UPLOADED_KEY = "uploads/uploaded/1/TriPle_logo_sm.png";
 const UPLOADED_URL =
   "https://triple-dev-s3.s3.ap-northeast-2.amazonaws.com/uploads/uploaded/1/TriPle_logo_sm.png";
 const MOCK_PRESIGNED_URL = `${LOCAL_BASE_URL}/mock-presigned-put`;
-const CSRF_STORAGE_KEY = "auth.csrf.token";
-const CSRF_TOKEN = "csrf-token-from-login";
+const ACCESS_TOKEN_STORAGE_KEY = "auth.accessToken";
+const ACCESS_TOKEN = "mock-access-token";
 
-const seedCsrfToken = async (page) => {
+const seedAccessToken = async (page) => {
   await page.addInitScript(
     ({ key, token }) => {
       window.sessionStorage.setItem(key, token);
     },
-    { key: CSRF_STORAGE_KEY, token: CSRF_TOKEN }
+    { key: ACCESS_TOKEN_STORAGE_KEY, token: ACCESS_TOKEN }
   );
 };
 
@@ -74,7 +74,7 @@ test.describe("Group create with image upload flow", () => {
     await page.route(FILE_UPLOAD_PRESIGN_API_PATTERN, async (route) => {
       callOrder.push("presign");
       const requestBody = route.request().postDataJSON();
-      expect(route.request().headers()["x-csrf-token"]).toBe(CSRF_TOKEN);
+      expect(route.request().headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
 
       expect(requestBody.presignedUrlRequestDtos).toHaveLength(1);
       expect(requestBody.presignedUrlRequestDtos[0].fileName).toBe("TriPle_logo_sm.png");
@@ -133,7 +133,7 @@ test.describe("Group create with image upload flow", () => {
     await page.route(FILE_UPLOAD_COMPLETE_API_PATTERN, async (route) => {
       callOrder.push("complete");
       const requestBody = route.request().postDataJSON();
-      expect(route.request().headers()["x-csrf-token"]).toBe(CSRF_TOKEN);
+      expect(route.request().headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
 
       expect(requestBody).toEqual({
         keys: [PENDING_KEY],
@@ -166,7 +166,7 @@ test.describe("Group create with image upload flow", () => {
 
       callOrder.push("create");
       groupCreatePayload = request.postDataJSON();
-      expect(request.headers()["x-csrf-token"]).toBe(CSRF_TOKEN);
+      expect(request.headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
 
       await route.fulfill({
         status: 200,
@@ -177,7 +177,7 @@ test.describe("Group create with image upload flow", () => {
       });
     });
 
-    await seedCsrfToken(page);
+    await seedAccessToken(page);
     await fillGroupCreateForm(page);
 
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/group/321`);
@@ -211,7 +211,7 @@ test.describe("Group create with image upload flow", () => {
     });
 
     await page.route(FILE_UPLOAD_PRESIGN_API_PATTERN, async (route) => {
-      expect(route.request().headers()["x-csrf-token"]).toBe(CSRF_TOKEN);
+      expect(route.request().headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -257,7 +257,7 @@ test.describe("Group create with image upload flow", () => {
     });
 
     await page.route(FILE_UPLOAD_COMPLETE_API_PATTERN, async (route) => {
-      expect(route.request().headers()["x-csrf-token"]).toBe(CSRF_TOKEN);
+      expect(route.request().headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
       await route.fulfill({
         status: 500,
         contentType: "application/json",
@@ -275,7 +275,7 @@ test.describe("Group create with image upload flow", () => {
       await route.continue();
     });
 
-    await seedCsrfToken(page);
+    await seedAccessToken(page);
     await fillGroupCreateForm(page);
 
     expect(groupCreateCalled).toBe(false);

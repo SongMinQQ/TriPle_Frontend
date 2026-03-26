@@ -1,5 +1,7 @@
 import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
+import { clearAccessToken } from "@/shared/lib/access-token";
+import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
 
 export const logout = async (): Promise<void> => {
   const requestBody = new URLSearchParams();
@@ -9,4 +11,7 @@ export const logout = async (): Promise<void> => {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });
+
+  clearAccessToken();
+  setAuthSessionHint(false);
 };

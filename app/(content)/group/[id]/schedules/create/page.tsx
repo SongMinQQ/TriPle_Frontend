@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { parseRouteGroupId, isValidRouteGroupId } from "@/entities/group/queries/group.query-utils";
-import { getScheduleCreateMembers } from "@/features/schedule/create/model/getScheduleCreateMembers";
-import { ScheduleCreateForm } from "@/features/schedule/create/ui/ScheduleCreateForm";
+import { ScheduleCreatePageContent } from "@/features/schedule/create/ui/ScheduleCreatePageContent";
 
 export default async function ScheduleCreatePage({
   params,
@@ -15,16 +14,11 @@ export default async function ScheduleCreatePage({
   }
 
   const groupId = parseRouteGroupId(id, "schedule-create-page");
-  const { members, requiredMemberId } = await getScheduleCreateMembers(groupId);
 
   return (
     <div>
       <h1 className="text-xl font-bold text-foreground">{"일정 생성"}</h1>
-      <ScheduleCreateForm
-        groupId={groupId}
-        members={members}
-        requiredMemberId={requiredMemberId}
-      />
+      <ScheduleCreatePageContent groupId={groupId} />
     </div>
   );
 }

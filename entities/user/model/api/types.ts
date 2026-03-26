@@ -16,12 +16,3 @@ export interface UpdateUserProfileRequest {
   description?: string;
   profileUrl?: string;
 }
-
-export interface UpdateUserProfileResponse {
-  userId: string;
-  nickname: string;
-  gender: string;
-  birth: string;
-  description: string;
-  profileUrl: string;
-}

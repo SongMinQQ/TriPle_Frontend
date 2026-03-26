@@ -85,11 +85,18 @@ export const TOAST_MESSAGES = {
       description: "가입 신청 승인 중 문제가 발생했습니다.",
     },
     /**
-     * 그룹 가입 신청 거절 API 미구현 안내.
+     * 그룹 가입 신청 거절 성공.
      */
-    JOIN_APPLY_REJECT_NOT_READY: {
-      title: "가입 신청 거절 준비 중",
-      description: "가입 신청 거절 기능은 백엔드 구현 후 제공됩니다.",
+    JOIN_APPLY_REJECT_SUCCESS: {
+      title: "가입 신청 거절 완료",
+      description: "선택한 사용자의 가입 신청을 거절했습니다.",
+    },
+    /**
+     * 그룹 가입 신청 거절 실패.
+     */
+    JOIN_APPLY_REJECT_FAILURE: {
+      title: "가입 신청 거절 실패",
+      description: "가입 신청 거절 중 문제가 발생했습니다.",
     },
     /**
      * 그룹 탈퇴 성공.

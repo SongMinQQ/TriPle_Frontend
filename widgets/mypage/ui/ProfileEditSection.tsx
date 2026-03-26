@@ -68,6 +68,18 @@ const hasProfileChanges = (
   profile.description.trim() !== payload.description ||
   (profile.profileUrl ?? "") !== payload.profileUrl;
 
+const mergeUpdatedProfile = (
+  profile: UserProfile,
+  payload: UpdateUserProfileRequest
+): UserProfile => ({
+  ...profile,
+  nickname: payload.nickname ?? profile.nickname,
+  gender: normalizeUserGender(payload.gender ?? profile.gender) || "",
+  birth: payload.birth ?? profile.birth,
+  description: payload.description ?? profile.description,
+  profileUrl: payload.profileUrl ?? profile.profileUrl,
+});
+
 const ProfileEditSection = ({
   profile,
   onClose,
@@ -132,7 +144,9 @@ const ProfileEditSection = ({
     setIsSubmitting(true);
 
     try {
-      const updatedProfile = await updateUserProfile(profilePayload);
+      await updateUserProfile(profilePayload);
+
+      const updatedProfile = mergeUpdatedProfile(profile, profilePayload);
 
       queryClient.setQueryData(USER_QUERY_KEYS.me(), updatedProfile);
       onClose();

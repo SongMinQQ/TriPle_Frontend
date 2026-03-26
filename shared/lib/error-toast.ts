@@ -2,6 +2,7 @@
 
 import { isAxiosError } from "axios";
 import { toast } from "@/shared/hooks/use-toast";
+import { AUTHORIZATION_HEADER } from "@/shared/lib/access-token";
 import type { ToastProps } from "@/shared/ui/toast";
 
 interface ShowErrorToastOptions {
@@ -10,6 +11,37 @@ interface ShowErrorToastOptions {
   fallbackDescription: string;
   variant?: ToastProps["variant"];
 }
+
+const hasAuthorizationHeader = (headers: unknown): boolean => {
+  if (!headers) {
+    return false;
+  }
+
+  if (
+    typeof headers === "object" &&
+    headers !== null &&
+    typeof (headers as { get?: unknown }).get === "function"
+  ) {
+    return Boolean((headers as { get: (headerName: string) => unknown }).get(AUTHORIZATION_HEADER));
+  }
+
+  if (typeof headers === "object" && headers !== null) {
+    const map = headers as Record<string, unknown>;
+    return Boolean(
+      map.authorization ?? map.Authorization ?? map[AUTHORIZATION_HEADER]
+    );
+  }
+
+  return false;
+};
+
+export const isHandledSessionExpiredError = (error: unknown): boolean => {
+  if (!isAxiosError(error) || error.response?.status !== 401) {
+    return false;
+  }
+
+  return hasAuthorizationHeader(error.config?.headers);
+};
 
 /**
  * Axios 응답 또는 일반 Error 객체에서 사용자에게 보여줄 메시지를 추출합니다.
@@ -41,6 +73,10 @@ export const showErrorToast = ({
   fallbackDescription,
   variant = "destructive",
 }: ShowErrorToastOptions) => {
+  if (isHandledSessionExpiredError(error)) {
+    return;
+  }
+
   toast({
     variant,
     title,

@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { isAxiosError } from "axios";
 import { toast } from "@/shared/hooks/use-toast";
 import { kakaoOauthLogin } from "@/features/auth/api/kakaoOauthLogin";
 import { consumeOAuthReturnPath } from "@/shared/lib/auth-return-path";
@@ -43,13 +42,11 @@ function KakaoCallbackInner() {
           description: TOAST_MESSAGES.AUTH.LOGIN_SUCCESS.description,
         });
       } catch (error) {
-        if (!isAxiosError(error) || error.response?.status !== 401) {
-          showErrorToast({
-            error,
-            title: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.title,
-            fallbackDescription: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.description,
-          });
-        }
+        showErrorToast({
+          error,
+          title: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.title,
+          fallbackDescription: TOAST_MESSAGES.AUTH.LOGIN_FAILURE.description,
+        });
       } finally {
         replaceToReturnPath();
       }

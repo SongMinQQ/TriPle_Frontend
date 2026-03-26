@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { isAxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { approveGroupJoinApply } from "@/entities/group/model/api/approveGroupJoinApply";
+import { rejectGroupJoinApply } from "@/entities/group/model/api/rejectGroupJoinApply";
 import { GROUP_QUERY_KEYS } from "@/entities/group/queries/group.query-keys";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
 import { toast } from "@/shared/hooks/use-toast";
@@ -36,8 +37,18 @@ export const useGroupJoinApplyManageAction = (routeGroupId: string) => {
     ]);
   }, [queryClient, routeGroupId]);
 
-  const requestApproveJoinApply = useCallback(
-    async (joinApplyId: number): Promise<boolean> => {
+  const runJoinApplyAction = useCallback(
+    async ({
+      joinApplyId,
+      action,
+      successMessage,
+      failureMessage,
+    }: {
+      joinApplyId: number;
+      action: (groupId: number, targetJoinApplyId: number) => Promise<void>;
+      successMessage: { title: string; description: string };
+      failureMessage: { title: string; description: string };
+    }): Promise<boolean> => {
       const groupId = Number(routeGroupId);
 
       if (
@@ -50,11 +61,11 @@ export const useGroupJoinApplyManageAction = (routeGroupId: string) => {
 
       try {
         setProcessingJoinApplyId(joinApplyId);
-        await approveGroupJoinApply(groupId, joinApplyId);
+        await action(groupId, joinApplyId);
 
         toast({
-          title: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_SUCCESS.title,
-          description: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_SUCCESS.description,
+          title: successMessage.title,
+          description: successMessage.description,
         });
 
         await invalidateGroupQueries();
@@ -66,8 +77,8 @@ export const useGroupJoinApplyManageAction = (routeGroupId: string) => {
 
         showErrorToast({
           error,
-          title: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_FAILURE.title,
-          fallbackDescription: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_FAILURE.description,
+          title: failureMessage.title,
+          fallbackDescription: failureMessage.description,
         });
         return false;
       } finally {
@@ -77,8 +88,31 @@ export const useGroupJoinApplyManageAction = (routeGroupId: string) => {
     [invalidateGroupQueries, processingJoinApplyId, routeGroupId]
   );
 
+  const requestApproveJoinApply = useCallback(
+    (joinApplyId: number): Promise<boolean> =>
+      runJoinApplyAction({
+        joinApplyId,
+        action: approveGroupJoinApply,
+        successMessage: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_SUCCESS,
+        failureMessage: TOAST_MESSAGES.GROUP.JOIN_APPLY_APPROVE_FAILURE,
+      }),
+    [runJoinApplyAction]
+  );
+
+  const requestRejectJoinApply = useCallback(
+    (joinApplyId: number): Promise<boolean> =>
+      runJoinApplyAction({
+        joinApplyId,
+        action: rejectGroupJoinApply,
+        successMessage: TOAST_MESSAGES.GROUP.JOIN_APPLY_REJECT_SUCCESS,
+        failureMessage: TOAST_MESSAGES.GROUP.JOIN_APPLY_REJECT_FAILURE,
+      }),
+    [runJoinApplyAction]
+  );
+
   return {
     processingJoinApplyId,
     requestApproveJoinApply,
+    requestRejectJoinApply,
   };
 };

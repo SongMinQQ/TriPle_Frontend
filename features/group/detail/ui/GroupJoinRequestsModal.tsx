@@ -6,8 +6,6 @@ import type { Member } from "@/entities/group/model/types";
 import { useGroupJoinAppliesInfiniteQuery } from "@/entities/group/queries/useGroupJoinAppliesInfiniteQuery";
 import { MemberCard } from "@/entities/member/ui/member-card";
 import { useGroupJoinApplyManageAction } from "@/features/group/detail/model/useGroupJoinApplyManageAction";
-import { TOAST_MESSAGES } from "@/shared/constants/toast";
-import { toast } from "@/shared/hooks/use-toast";
 import { Modal } from "@/shared/ui/modal";
 
 interface GroupJoinRequestsModalProps {
@@ -42,7 +40,11 @@ export function GroupJoinRequestsModal({
     status: "PENDING",
     size: 20,
   });
-  const { processingJoinApplyId, requestApproveJoinApply } =
+  const {
+    processingJoinApplyId,
+    requestApproveJoinApply,
+    requestRejectJoinApply,
+  } =
     useGroupJoinApplyManageAction(routeGroupId);
 
   const joinApplies = useMemo(
@@ -62,11 +64,8 @@ export function GroupJoinRequestsModal({
     await requestApproveJoinApply(joinApplyId);
   };
 
-  const handleRejectNotReady = () => {
-    toast({
-      title: TOAST_MESSAGES.GROUP.JOIN_APPLY_REJECT_NOT_READY.title,
-      description: TOAST_MESSAGES.GROUP.JOIN_APPLY_REJECT_NOT_READY.description,
-    });
+  const handleReject = async (joinApplyId: number) => {
+    await requestRejectJoinApply(joinApplyId);
   };
 
   return (
@@ -114,11 +113,13 @@ export function GroupJoinRequestsModal({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={handleRejectNotReady}
+                      onClick={() => void handleReject(joinApply.joinApplyId)}
                       disabled={processingJoinApplyId !== null}
                       className="rounded-md border border-border px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      거절
+                      {processingJoinApplyId === joinApply.joinApplyId
+                        ? "처리 중..."
+                        : "거절"}
                     </button>
                     <button
                       type="button"

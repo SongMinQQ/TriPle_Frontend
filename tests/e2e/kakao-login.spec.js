@@ -6,29 +6,19 @@ const USER_ME_API_PATTERN = "**/users/me";
 const KAKAO_AUTH_URL_PATTERN =
   /https:\/\/(accounts\.kakao\.com\/login|kauth\.kakao\.com\/oauth\/authorize)/;
 const KAKAO_LOGIN_BUTTON_SELECTOR = 'button:has(img[src*="kakao_login_medium_narrow.png"])';
-const CSRF_STORAGE_KEY = "auth.csrf.token";
-const MOCK_CSRF_TOKEN = "csrf-token-from-login";
+const ACCESS_TOKEN_STORAGE_KEY = "auth.accessToken";
+const MOCK_ACCESS_TOKEN = "mock-access-token";
 
 test.describe("Kakao OAuth callback login", () => {
   test.use({ ignoreHTTPSErrors: true });
 
-  test("Success Case: home -> kakao login -> callback -> login API -> JSESSIONID stored", async ({
+  test("Success Case: home -> kakao login -> callback -> login API -> Authorization token stored", async ({
     page,
   }) => {
     let meRequestCount = 0;
-    let loginApiOrigin = "";
 
     await page.route(USER_ME_API_PATTERN, async (route) => {
       meRequestCount += 1;
-
-      if (meRequestCount === 1) {
-        await route.fulfill({
-          status: 401,
-          contentType: "application/json",
-          body: JSON.stringify({ message: "Unauthorized" }),
-        });
-        return;
-      }
 
       await route.fulfill({
         status: 200,
@@ -52,7 +42,6 @@ test.describe("Kakao OAuth callback login", () => {
     await page.route(LOGIN_API_PATTERN, async (route) => {
       const request = route.request();
       const requestBody = request.postDataJSON();
-      loginApiOrigin = new URL(request.url()).origin;
 
       expect(request.method()).toBe("POST");
       expect(requestBody).toEqual({
@@ -64,9 +53,10 @@ test.describe("Kakao OAuth callback login", () => {
         status: 200,
         headers: {
           "content-type": "application/json",
-          "x-csrf-token": MOCK_CSRF_TOKEN,
-          "access-control-expose-headers": "X-CSRF-Token",
-          "set-cookie": "JSESSIONID=mock-session-id; Path=/; HttpOnly; Secure; SameSite=None",
+          authorization: `Bearer ${MOCK_ACCESS_TOKEN}`,
+          "access-control-expose-headers": "Authorization",
+          "set-cookie":
+            "refresh_token=mock-refresh-token; Path=/auth; HttpOnly; Secure; SameSite=None",
         },
         body: JSON.stringify({
           nickname: "test",
@@ -82,14 +72,11 @@ test.describe("Kakao OAuth callback login", () => {
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
     await expect(page.locator(KAKAO_LOGIN_BUTTON_SELECTOR)).toHaveCount(0);
 
-    const cookies = await page.context().cookies(loginApiOrigin || LOCAL_BASE_URL);
-    const jsession = cookies.find((cookie) => cookie.name === "JSESSIONID");
-    expect(jsession).toBeTruthy();
-
-    const csrfTokenInStorage = await page.evaluate((storageKey) => {
+    const accessTokenInStorage = await page.evaluate((storageKey) => {
       return window.sessionStorage.getItem(storageKey);
-    }, CSRF_STORAGE_KEY);
-    expect(csrfTokenInStorage).toBe(MOCK_CSRF_TOKEN);
+    }, ACCESS_TOKEN_STORAGE_KEY);
+    expect(accessTokenInStorage).toBe(MOCK_ACCESS_TOKEN);
+    expect(meRequestCount).toBe(1);
   });
 
   test("Fail Case: 400 response shows login failure message", async ({ page }) => {
@@ -122,7 +109,7 @@ test.describe("Kakao OAuth callback login", () => {
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
   });
 
-  test("Fail Case: 401 response shows session-expired feedback", async ({ page }) => {
+  test("Fail Case: 401 response shows login failure feedback", async ({ page }) => {
     await page.route(USER_ME_API_PATTERN, async (route) => {
       await route.fulfill({
         status: 401,
@@ -148,7 +135,7 @@ test.describe("Kakao OAuth callback login", () => {
 
     await page.goto(`${LOCAL_BASE_URL}/kakao?code=expired-session-code`);
 
-    await expect(page.getByText("세션 만료", { exact: true })).toBeVisible();
+    await expect(page.getByText("로그인 실패", { exact: true })).toBeVisible();
     await expect(page).toHaveURL(`${LOCAL_BASE_URL}/`);
   });
 });

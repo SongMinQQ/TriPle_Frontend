@@ -1,12 +1,6 @@
 import React from "react";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-
-import type { GetGroupDetailResponse } from "@/entities/group/model/api/types";
-import { REQUEST_PATHS } from "@/shared/constants/paths";
 import { GroupSidebar } from "@/widgets/group/layout/group-sidebar";
-
-const NOT_FOUND_RESPONSE_STATUS = new Set([401, 403, 404]);
 
 const parseRouteGroupId = (id: string): number | null => {
   if (!/^\d+$/.test(id)) {
@@ -17,42 +11,6 @@ const parseRouteGroupId = (id: string): number | null => {
   return Number.isSafeInteger(numericGroupId) && numericGroupId > 0
     ? numericGroupId
     : null;
-};
-
-const fetchGroupDetailForGuard = async (
-  groupId: number
-): Promise<GetGroupDetailResponse> => {
-  const serverAddress = process.env.NEXT_PUBLIC_SERVER_ADDRESS;
-
-  if (!serverAddress) {
-    throw new Error("NEXT_PUBLIC_SERVER_ADDRESS is not configured.");
-  }
-
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
-
-  const response = await fetch(`${serverAddress}${REQUEST_PATHS.GROUPS.DETAIL(groupId)}`, {
-    method: "GET",
-    cache: "no-store",
-    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
-  });
-
-  if (!response.ok) {
-    if (NOT_FOUND_RESPONSE_STATUS.has(response.status)) {
-      notFound();
-    }
-
-    throw new Error(`Failed to fetch group detail for guard. status=${response.status}`);
-  }
-
-  return (await response.json()) as GetGroupDetailResponse;
-};
-
-const shouldBlockByPrivacy = (detail: GetGroupDetailResponse): boolean => {
-  const isPrivateGroup = detail.groupKind === "PRIVATE";
-  const isGuest = !detail.role || detail.role === "GUEST";
-
-  return isPrivateGroup && isGuest;
 };
 
 export default async function GroupLayout({
@@ -66,11 +24,6 @@ export default async function GroupLayout({
   const numericGroupId = parseRouteGroupId(id);
 
   if (numericGroupId === null) {
-    notFound();
-  }
-
-  const groupDetail = await fetchGroupDetailForGuard(numericGroupId);
-  if (shouldBlockByPrivacy(groupDetail)) {
     notFound();
   }
 

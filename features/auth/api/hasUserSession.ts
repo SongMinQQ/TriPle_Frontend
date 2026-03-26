@@ -1,7 +1,8 @@
 import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
-import { clearCsrfToken } from "@/shared/lib/csrf-token";
+import { clearAccessToken, getAccessToken } from "@/shared/lib/access-token";
+import { reissueAccessTokenOnce } from "@/shared/lib/api/reissue-access-token";
 
 let inFlightSessionCheck: Promise<boolean> | null = null;
 
@@ -11,14 +12,23 @@ export const hasUserSession = async (): Promise<boolean> => {
   }
 
   inFlightSessionCheck = (async () => {
+    if (!getAccessToken()) {
+      const reissuedAccessToken = await reissueAccessTokenOnce();
+
+      if (!reissuedAccessToken) {
+        setAuthSessionHint(false);
+        return false;
+      }
+    }
+
     const response = await api.get(REQUEST_PATHS.USERS.ME, {
-      validateStatus: (status) => status === 200 || status === 401 || status === 404,
+      validateStatus: (status) => status === 200 || status === 404,
     });
 
     const isAuthenticated = response.status === 200;
 
     if (!isAuthenticated) {
-      clearCsrfToken();
+      clearAccessToken();
     }
 
     setAuthSessionHint(isAuthenticated);
