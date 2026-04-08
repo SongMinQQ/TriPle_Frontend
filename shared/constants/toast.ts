@@ -197,5 +197,9 @@ export const TOAST_MESSAGES = {
       title: "여행 메타 정보 조회 실패",
       description: "여행 메타 정보를 불러오는 중 문제가 발생했습니다.",
     },
+    COLLABORATION_EDITOR_INIT_FAILURE: {
+      title: "일정 협업 에디터 준비 실패",
+      description: "잠시 후 다시 시도해 주세요.",
+    },
   },
 } as const;

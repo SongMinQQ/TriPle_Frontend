@@ -30,6 +30,7 @@ export const REQUEST_PATHS = {
     CREATE: "/travels",
     LIST: (groupId: number) => `/travels/${groupId}`,
     DETAIL_INFO: (travelId: number) => `/travels/${travelId}/info`,
+    SECONDARY_TOKEN: (travelId: number) => `/travels/${travelId}/secondary-token`,
   },
   USERS: {
     ROOT: "/users",

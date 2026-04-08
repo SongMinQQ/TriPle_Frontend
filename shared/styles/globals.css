@@ -1,4 +1,7 @@
-﻿@tailwind base;
+@import "quill/dist/quill.snow.css";
+@import "quill-cursors/css";
+
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -97,5 +100,79 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .schedule-collaboration-editor .ql-toolbar.ql-snow {
+    border: 0;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--muted) / 0.55);
+    padding: 0.75rem;
+  }
+
+  .schedule-collaboration-editor .ql-toolbar .ql-formats {
+    margin-right: 0.75rem;
+  }
+
+  .schedule-collaboration-editor .ql-container.ql-snow {
+    border: 0;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+
+  .schedule-collaboration-editor .ql-editor {
+    min-height: 360px;
+    padding: 1.25rem;
+    color: hsl(var(--foreground));
+    line-height: 1.8;
+  }
+
+  .schedule-collaboration-editor .ql-editor.ql-blank::before {
+    left: 1.25rem;
+    right: 1.25rem;
+    color: hsl(var(--muted-foreground));
+    font-style: normal;
+  }
+
+  .schedule-collaboration-editor .ql-editor h1,
+  .schedule-collaboration-editor .ql-editor h2,
+  .schedule-collaboration-editor .ql-editor h3 {
+    color: hsl(var(--foreground));
+    font-weight: 700;
+  }
+
+  .schedule-collaboration-editor .ql-editor ul,
+  .schedule-collaboration-editor .ql-editor ol {
+    padding-left: 1.5rem;
+  }
+
+  .schedule-collaboration-editor .ql-snow .ql-stroke {
+    stroke: hsl(var(--muted-foreground));
+  }
+
+  .schedule-collaboration-editor .ql-snow .ql-fill {
+    fill: hsl(var(--muted-foreground));
+  }
+
+  .schedule-collaboration-editor .ql-snow .ql-picker {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .schedule-collaboration-editor .ql-snow button:hover .ql-stroke,
+  .schedule-collaboration-editor .ql-snow button.ql-active .ql-stroke {
+    stroke: hsl(var(--primary));
+  }
+
+  .schedule-collaboration-editor .ql-snow button:hover .ql-fill,
+  .schedule-collaboration-editor .ql-snow button.ql-active .ql-fill {
+    fill: hsl(var(--primary));
+  }
+
+  .schedule-collaboration-editor .ql-snow .ql-picker-label:hover,
+  .schedule-collaboration-editor .ql-snow .ql-picker-label.ql-active,
+  .schedule-collaboration-editor .ql-snow .ql-picker-item:hover,
+  .schedule-collaboration-editor .ql-snow .ql-picker-item.ql-selected {
+    color: hsl(var(--primary));
   }
 }

@@ -4,9 +4,6 @@ import type {
   ScheduleSettlementAccountForm,
 } from "@/features/schedule/detail/model/types";
 
-export const initialScheduleMarkdownContent =
-  "## 1일차\n\n- 비행기 탑승\n- 렌터카 픽업\n- 숙소\n- 동문시장 탐방\n";
-
 export const initialSettlement: ScheduleSettlement = {
   accountNumber: "999999-00-999999",
   bankName: "KB국민",

@@ -1,6 +1,7 @@
 import api from "@/shared/lib/api/client";
 import { REQUEST_PATHS } from "@/shared/constants/paths";
 import { clearAccessToken } from "@/shared/lib/access-token";
+import { useCurrentUserStore } from "@/entities/user/model/currentUserStore";
 import { setAuthSessionHint } from "@/shared/lib/auth-session-hint";
 
 export const logout = async (): Promise<void> => {
@@ -14,4 +15,5 @@ export const logout = async (): Promise<void> => {
 
   clearAccessToken();
   setAuthSessionHint(false);
+  useCurrentUserStore.getState().setUnauthenticated();
 };

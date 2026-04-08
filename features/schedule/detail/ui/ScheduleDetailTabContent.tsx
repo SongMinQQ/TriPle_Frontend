@@ -91,9 +91,16 @@ export function ScheduleDetailTabContent() {
       </div>
 
       <div className="mt-4">
-        {activeTab === "itinerary" ? (
+        <div
+          className={activeTab === "itinerary" ? "block" : "hidden"}
+          aria-hidden={activeTab !== "itinerary"}
+        >
           <ScheduleItineraryEditorSection />
-        ) : (
+        </div>
+        <div
+          className={activeTab === "settlement" ? "block" : "hidden"}
+          aria-hidden={activeTab !== "settlement"}
+        >
           <ScheduleSettlementSection
             settlement={settlement}
             splitMode={splitMode}
@@ -104,7 +111,7 @@ export function ScheduleDetailTabContent() {
             onManualToggle={handleManualToggle}
             onAmountChange={handleAmountChange}
           />
-        )}
+        </div>
       </div>
     </>
   );

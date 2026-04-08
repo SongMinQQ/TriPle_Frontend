@@ -1,60 +1,105 @@
-﻿"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { UserRound } from "lucide-react"
-import KakaoLoginBtn from "@/features/auth/KakaoLoginBtn"
-import { hasUserSession } from "@/features/auth/api/hasUserSession"
-import { AUTH_EVENTS } from "@/shared/constants/auth"
-import { getAuthSessionHint } from "@/shared/lib/auth-session-hint"
+import { useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserRound } from "lucide-react";
+import { getMyProfile } from "@/entities/user/model/api/getMyProfile";
+import { useCurrentUserStore } from "@/entities/user/model/currentUserStore";
+import { USER_QUERY_KEYS } from "@/entities/user/queries/user.query-keys";
+import KakaoLoginBtn from "@/features/auth/KakaoLoginBtn";
+import { hasUserSession } from "@/features/auth/api/hasUserSession";
+import { AUTH_EVENTS } from "@/shared/constants/auth";
+import { getAuthSessionHint } from "@/shared/lib/auth-session-hint";
 
-const LOGO_HREF = "/"
+const LOGO_HREF = "/";
 const NAV_LINKS = [
   { href: "/", label: "내 여행 그룹" },
   { href: "/mypage", label: "마이페이지" },
-]
+];
 
 export function Header() {
-  const [hasSession, setHasSession] = useState<boolean | null>(null)
-  const isAuthenticated = hasSession === true
+  const queryClient = useQueryClient();
+  const currentUser = useCurrentUserStore((state) => state.currentUser);
+  const authStatus = useCurrentUserStore((state) => state.status);
+  const setPending = useCurrentUserStore((state) => state.setPending);
+  const setAuthenticatedUser = useCurrentUserStore(
+    (state) => state.setAuthenticatedUser
+  );
+  const setUnauthenticated = useCurrentUserStore(
+    (state) => state.setUnauthenticated
+  );
+  const isAuthenticated = currentUser !== null;
 
   useEffect(() => {
-    let mounted = true
-    const hintedSession = getAuthSessionHint()
+    let mounted = true;
+
+    const clearCurrentUserState = () => {
+      queryClient.removeQueries({
+        queryKey: USER_QUERY_KEYS.me(),
+      });
+      setUnauthenticated();
+    };
 
     const handleSessionExpired = () => {
-      if(mounted){
-        setHasSession(false)
+      if (!mounted) {
+        return;
       }
-    }
 
-    const syncSession = async () => {
+      clearCurrentUserState();
+    };
+
+    const syncCurrentUser = async () => {
+      setPending();
+
+      if (getAuthSessionHint() === false) {
+        if (mounted) {
+          clearCurrentUserState();
+        }
+        return;
+      }
+
       try {
-        const active = await hasUserSession()
-        if (mounted) {
-          setHasSession(active)
+        const active = await hasUserSession();
+
+        if (!mounted) {
+          return;
         }
+
+        if (!active) {
+          clearCurrentUserState();
+          return;
+        }
+
+        const profile = await queryClient.fetchQuery({
+          queryKey: USER_QUERY_KEYS.me(),
+          queryFn: getMyProfile,
+          staleTime: 1000 * 30,
+        });
+
+        if (!mounted) {
+          return;
+        }
+
+        setAuthenticatedUser(profile);
       } catch {
-        if (mounted) {
-          setHasSession(false)
+        if (!mounted) {
+          return;
         }
+
+        clearCurrentUserState();
       }
-    }
+    };
 
-    if (hintedSession === false) {
-      setHasSession(false)
-    } else {
-      void syncSession()
-    }
-
-    window.addEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired)
+    void syncCurrentUser();
+    window.addEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired);
 
     return () => {
-      mounted = false
-      window.removeEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired)
-    }
-  }, [])
+      mounted = false;
+      window.removeEventListener(AUTH_EVENTS.SESSION_EXPIRED, handleSessionExpired);
+    };
+  }, [queryClient, setAuthenticatedUser, setPending, setUnauthenticated]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
@@ -93,9 +138,9 @@ export function Header() {
               <UserRound className="h-5 w-5" />
             </Link>
           ) : null}
-          {hasSession === false ? <KakaoLoginBtn /> : null}
+          {authStatus === "unauthenticated" ? <KakaoLoginBtn /> : null}
         </nav>
       </div>
     </header>
-  )
+  );
 }

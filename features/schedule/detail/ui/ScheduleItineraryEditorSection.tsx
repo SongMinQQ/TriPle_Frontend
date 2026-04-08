@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { initialScheduleMarkdownContent } from "@/features/schedule/detail/model/scheduleDetailState";
-import { MarkdownEditor } from "@/shared/ui/markdown-editor";
+import { useParams } from "next/navigation";
+import {
+  getRouteParam,
+  getScheduleEditorDocumentName,
+} from "@/features/schedule/detail/model/scheduleEditorUtils";
+import { ScheduleEditor } from "@/features/schedule/detail/ui/ScheduleEditor";
 
 export function ScheduleItineraryEditorSection() {
-  const [markdownContent, setMarkdownContent] = useState(initialScheduleMarkdownContent);
+  const params = useParams<{ scheduleId: string }>();
+  const scheduleId = getRouteParam(params?.scheduleId);
+  const documentName = getScheduleEditorDocumentName(scheduleId);
 
   return (
     <section aria-label="여행 일정 에디터">
-      <MarkdownEditor value={markdownContent} onChange={setMarkdownContent} />
+      <ScheduleEditor documentName={documentName} travelId={scheduleId} />
     </section>
   );
 }

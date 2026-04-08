@@ -13,6 +13,7 @@ import {
   USER_GENDERS,
   type UserGender,
 } from "@/entities/user/model/gender";
+import { useCurrentUserStore } from "@/entities/user/model/currentUserStore";
 import { USER_QUERY_KEYS } from "@/entities/user/queries/user.query-keys";
 import type { UpdateUserProfileRequest } from "@/entities/user/model/api/types";
 import type { UserProfile } from "@/entities/user/model/types";
@@ -85,6 +86,9 @@ const ProfileEditSection = ({
   onClose,
 }: ProfileEditSectionProps) => {
   const queryClient = useQueryClient();
+  const setAuthenticatedUser = useCurrentUserStore(
+    (state) => state.setAuthenticatedUser
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<ProfileFormState>(() =>
     createProfileFormState(profile)
@@ -149,6 +153,7 @@ const ProfileEditSection = ({
       const updatedProfile = mergeUpdatedProfile(profile, profilePayload);
 
       queryClient.setQueryData(USER_QUERY_KEYS.me(), updatedProfile);
+      setAuthenticatedUser(updatedProfile);
       onClose();
 
       toast({
