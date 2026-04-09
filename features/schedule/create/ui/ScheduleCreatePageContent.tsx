@@ -5,6 +5,10 @@ import type { GroupMemberDto } from "@/entities/group/model/api/types";
 import type { UserProfile } from "@/entities/user/model/types";
 import { useGroupMembersQuery } from "@/entities/group/queries/useGroupMembersQuery";
 import { useMyProfileQuery } from "@/entities/user/queries/useMyProfileQuery";
+import {
+  findCurrentUserScheduleMember,
+  mergeScheduleCreateMembers,
+} from "@/features/schedule/create/model/scheduleCreateMembers";
 import { ScheduleCreateForm } from "@/features/schedule/create/ui/ScheduleCreateForm";
 
 interface ScheduleCreatePageContentProps {
@@ -15,8 +19,10 @@ const getRequiredMemberId = (
   members: GroupMemberDto[],
   currentUser: UserProfile | undefined
 ): string | null => {
-  if (currentUser?.id && members.some((member) => member.id === currentUser.id)) {
-    return currentUser.id;
+  const currentUserMember = findCurrentUserScheduleMember(members, currentUser);
+
+  if (currentUserMember) {
+    return currentUserMember.id;
   }
 
   return members.length === 1 ? members[0].id : null;
@@ -40,26 +46,10 @@ export function ScheduleCreatePageContent({
   } = useMyProfileQuery();
 
   const members = useMemo(() => {
-    const fetchedMembers = groupMembers?.users ?? [];
-
-    if (!currentUser?.id) {
-      return fetchedMembers;
-    }
-
-    if (fetchedMembers.some((member) => member.id === currentUser.id)) {
-      return fetchedMembers;
-    }
-
-    return [
-      {
-        id: currentUser.id,
-        name: currentUser.nickname,
-        description: currentUser.description,
-        profileUrl: currentUser.profileUrl,
-        isOwner: false,
-      },
-      ...fetchedMembers,
-    ];
+    return mergeScheduleCreateMembers({
+      fetchedMembers: groupMembers?.users ?? [],
+      currentUser,
+    });
   }, [currentUser, groupMembers?.users]);
 
   const requiredMemberId = useMemo(
