@@ -54,7 +54,7 @@ export function ScheduleEditor({ documentName, travelId }: ScheduleEditorProps) 
     let doc: import("yjs").Doc | null = null;
     let provider: import("y-websocket").WebsocketProvider | null = null;
     let isInitialConnectionEstablished = false;
-    let connectionTimeoutId: ReturnType<typeof window.setTimeout> | null = null;
+    let connectionTimeoutId: number | null = null;
 
     const waitForInitialConnection = (
       activeProvider: import("y-websocket").WebsocketProvider
@@ -74,9 +74,9 @@ export function ScheduleEditor({ documentName, travelId }: ScheduleEditorProps) 
             ) => void;
           };
 
-          observableProvider.off?.("status", handleInitialStatus);
-          observableProvider.off?.("connection-close", handleInitialClose);
-          observableProvider.off?.("connection-error", handleInitialError);
+          observableProvider.off?.("status", handleInitialStatusEvent);
+          observableProvider.off?.("connection-close", handleInitialCloseEvent);
+          observableProvider.off?.("connection-error", handleInitialErrorEvent);
 
           if (connectionTimeoutId !== null) {
             window.clearTimeout(connectionTimeoutId);
@@ -126,9 +126,34 @@ export function ScheduleEditor({ documentName, travelId }: ScheduleEditorProps) 
           pendingErrorEvent = event;
         };
 
-        activeProvider.on("status", handleInitialStatus);
-        activeProvider.on("connection-close", handleInitialClose);
-        activeProvider.on("connection-error", handleInitialError);
+        const handleInitialStatusEvent = (...eventArgs: unknown[]) => {
+          const [event] = eventArgs;
+
+          if (event && typeof event === "object" && "status" in event) {
+            handleInitialStatus(
+              event as { status: ScheduleEditorWebSocketStatus }
+            );
+          }
+        };
+
+        const handleInitialCloseEvent = (...eventArgs: unknown[]) => {
+          const [event] = eventArgs;
+          handleInitialClose(
+            event && typeof event === "object" ? (event as CloseEvent) : null
+          );
+        };
+
+        const handleInitialErrorEvent = (...eventArgs: unknown[]) => {
+          const [event] = eventArgs;
+
+          if (event instanceof Event) {
+            handleInitialError(event);
+          }
+        };
+
+        activeProvider.on("status", handleInitialStatusEvent);
+        activeProvider.on("connection-close", handleInitialCloseEvent);
+        activeProvider.on("connection-error", handleInitialErrorEvent);
       });
 
     const initializeEditor = async () => {

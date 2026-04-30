@@ -55,3 +55,4 @@ certificates
 # AI Agents
 .codex/
 .agents/
+.playwright-mcp

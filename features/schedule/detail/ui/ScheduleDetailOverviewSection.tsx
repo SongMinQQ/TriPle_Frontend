@@ -5,18 +5,17 @@ import { useParams } from "next/navigation";
 import { useScheduleMetaQuery } from "@/entities/schedule/queries/useScheduleMetaQuery";
 import { TOAST_MESSAGES } from "@/shared/constants/toast";
 import { showErrorToast } from "@/shared/lib/error-toast";
+import { getRouteParam } from "@/features/schedule/detail/model/scheduleEditorUtils";
 import { ScheduleDetailHeader } from "@/features/schedule/detail/ui/ScheduleDetailHeader";
 import { ScheduleDetailMemberList } from "@/features/schedule/detail/ui/ScheduleDetailMemberList";
 import { ScheduleDetailOverviewSkeleton } from "@/features/schedule/detail/ui/ScheduleDetailOverviewSkeleton";
 import { GroupDetailQueryErrorState } from "@/widgets/group/detail/ui/GroupDetailQueryErrorState";
 
-const getRouteScheduleId = (scheduleId: string | string[] | undefined): string =>
-  Array.isArray(scheduleId) ? scheduleId[0] ?? "" : scheduleId ?? "";
-
 export function ScheduleDetailOverviewSection() {
   const hasShownScheduleMetaErrorToastRef = useRef(false);
-  const params = useParams<{ scheduleId: string }>();
-  const routeScheduleId = getRouteScheduleId(params?.scheduleId);
+  const params = useParams<{ id: string; scheduleId: string }>();
+  const routeGroupId = getRouteParam(params?.id);
+  const routeScheduleId = getRouteParam(params?.scheduleId);
   const {
     data: scheduleMeta,
     error: scheduleMetaError,
@@ -59,7 +58,11 @@ export function ScheduleDetailOverviewSection() {
   return (
     <section>
       <ScheduleDetailHeader schedule={scheduleMeta.schedule} />
-      <ScheduleDetailMemberList members={scheduleMeta.members} />
+      <ScheduleDetailMemberList
+        members={scheduleMeta.members}
+        routeGroupId={routeGroupId}
+        routeScheduleId={routeScheduleId}
+      />
     </section>
   );
 }

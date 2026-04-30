@@ -48,7 +48,7 @@ export function GroupDetailMobileOverviewSection({
           <div className="flex items-start gap-3">
             <Image
               src={group.image || PLACEHOLDERS.GROUP_AVATAR}
-              alt={group.name}
+              alt={`${group.name} 모임 대표 이미지`}
               width={64}
               height={64}
               className="shrink-0 rounded-xl object-cover"

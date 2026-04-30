@@ -39,6 +39,10 @@ export interface CreateScheduleResponse {
   itineraryId: number;
 }
 
+export interface AddScheduleMemberRequest {
+  userUuid: string;
+}
+
 export type ScheduleMetaMemberRole = "LEADER" | "MEMBER" | string;
 
 export interface ScheduleMetaMemberDto {

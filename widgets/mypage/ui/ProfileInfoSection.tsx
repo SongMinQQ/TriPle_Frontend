@@ -93,7 +93,7 @@ const ProfileInfoSection = ({
               {"한줄소개"}
             </span>
             <span className="text-xs text-muted-foreground">
-              {profile.description.length}자
+              {profile.description?.length ?? 0}자
             </span>
           </div>
           <p className="mt-2 rounded-xl border border-border px-3 py-3 text-sm text-muted-foreground">

@@ -7,17 +7,26 @@ import { PLACEHOLDERS } from "@/shared/constants/constants";
 interface MemberCardProps {
   member: Member;
   action?: ReactNode;
+  profileImageSize?: number;
 }
 
-export function MemberCard({ member, action }: MemberCardProps) {
+export function MemberCard({
+  member,
+  action,
+  profileImageSize = 48,
+}: MemberCardProps) {
   return (
     <div className="flex items-center gap-3">
       <Image
         src={member.avatar || PLACEHOLDERS.PROFILE_AVATAR}
         alt={member.name}
-        width={48}
-        height={48}
-        className="rounded-full object-cover"
+        width={profileImageSize}
+        height={profileImageSize}
+        style={{
+          width: profileImageSize,
+          height: profileImageSize,
+        }}
+        className="shrink-0 rounded-full object-cover"
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">

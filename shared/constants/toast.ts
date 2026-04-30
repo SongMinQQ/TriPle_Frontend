@@ -162,6 +162,13 @@ export const TOAST_MESSAGES = {
       description: "멤버 추방 중 문제가 발생했습니다.",
     },
     /**
+     * 그룹 멤버 목록 조회 실패.
+     */
+    MEMBER_LIST_FAILURE: {
+      title: "그룹 멤버 조회 실패",
+      description: "그룹 멤버 목록을 불러오는 중 문제가 발생했습니다.",
+    },
+    /**
      * 그룹장 양도 성공.
      */
     OWNER_TRANSFER_SUCCESS: {
@@ -196,6 +203,22 @@ export const TOAST_MESSAGES = {
     DETAIL_FAILURE: {
       title: "여행 메타 정보 조회 실패",
       description: "여행 메타 정보를 불러오는 중 문제가 발생했습니다.",
+    },
+    MEMBER_ADD_SUCCESS: {
+      title: "여행 멤버 추가 완료",
+      description: "선택한 그룹원을 여행 일정에 추가했습니다.",
+    },
+    MEMBER_ADD_FAILURE: {
+      title: "여행 멤버 추가 실패",
+      description: "여행 멤버 추가 중 문제가 발생했습니다.",
+    },
+    LEAVE_SUCCESS: {
+      title: "여행 일정 탈퇴 완료",
+      description: "여행 일정에서 탈퇴했습니다.",
+    },
+    LEAVE_FAILURE: {
+      title: "여행 일정 탈퇴 실패",
+      description: "여행 일정 탈퇴 중 문제가 발생했습니다.",
     },
     COLLABORATION_EDITOR_INIT_FAILURE: {
       title: "일정 협업 에디터 준비 실패",
