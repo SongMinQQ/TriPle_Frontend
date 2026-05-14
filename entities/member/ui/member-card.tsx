@@ -33,9 +33,11 @@ export function MemberCard({
           <span className="text-sm font-semibold text-foreground">{member.name}</span>
           {member.isLeader ? <Crown className="h-4 w-4 text-[#f4a261]" /> : null}
         </div>
-        <p className="mt-0.5 truncate text-xs leading-relaxed text-muted-foreground">
-          {member.bio}
-        </p>
+        {member.bio ? (
+          <p className="mt-0.5 truncate text-xs leading-relaxed text-muted-foreground">
+            {member.bio}
+          </p>
+        ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>

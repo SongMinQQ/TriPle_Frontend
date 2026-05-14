@@ -9,6 +9,7 @@ export const initialSettlement: ScheduleSettlement = {
   bankName: "KB국민",
   accountHolder: "김민준",
   totalAmount: 180000,
+  transferStatus: "IN_PROGRESS",
   members: [
     {
       id: "1",

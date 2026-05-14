@@ -1,3 +1,8 @@
+import type {
+  ScheduleSettlement,
+  ScheduleSettlementMember,
+} from "@/entities/schedule/model/settlement";
+
 export interface GroupScheduleListItemDto {
   id: number;
   travelId?: number;
@@ -56,4 +61,22 @@ export interface GetScheduleMetaResponse {
   startAt: string;
   endAt: string;
   members: ScheduleMetaMemberDto[];
+}
+
+export interface ScheduleSettlementMemberDto
+  extends Omit<ScheduleSettlementMember, "avatar" | "amount"> {
+  avatar: string | null;
+  amount: number | null;
+}
+
+export interface GetScheduleSettlementResponse
+  extends Omit<
+    ScheduleSettlement,
+    "accountNumber" | "bankName" | "accountHolder" | "totalAmount" | "members"
+  > {
+  accountNumber: string | null;
+  bankName: string | null;
+  accountHolder: string | null;
+  totalAmount: number | null;
+  members: ScheduleSettlementMemberDto[];
 }

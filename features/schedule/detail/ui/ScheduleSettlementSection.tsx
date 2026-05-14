@@ -9,6 +9,14 @@ import type {
 import { ScheduleSettlementAccountChangeButton } from "@/features/schedule/detail/ui/ScheduleSettlementAccountChangeButton";
 import { ScheduleSettlementMemberList } from "@/features/schedule/detail/ui/ScheduleSettlementMemberList";
 
+const TRANSFER_STATUS_LABELS: Record<string, string> = {
+  IN_PROGRESS: "정산 진행 중",
+  DONE: "정산 완료",
+};
+
+const getTransferStatusLabel = (status: string): string =>
+  TRANSFER_STATUS_LABELS[status] ?? status;
+
 interface ScheduleSettlementSectionProps {
   settlement: ScheduleSettlement;
   splitMode: SettlementSplitMode;
@@ -30,6 +38,11 @@ export function ScheduleSettlementSection({
   onManualToggle,
   onAmountChange,
 }: ScheduleSettlementSectionProps) {
+  const hasAccount =
+    Boolean(settlement.accountNumber) ||
+    Boolean(settlement.bankName) ||
+    Boolean(settlement.accountHolder);
+
   return (
     <section className="flex flex-col gap-6" aria-label="여행 정산">
       <div>
@@ -42,8 +55,9 @@ export function ScheduleSettlementSection({
         </div>
         <div className="mt-3 flex items-center gap-3 rounded-lg bg-muted px-4 py-3">
           <span className="flex-1 text-sm font-medium text-foreground">
-            {settlement.accountNumber} {settlement.bankName} {"예금주: "}
-            {settlement.accountHolder}
+            {hasAccount
+              ? `${settlement.accountNumber} ${settlement.bankName} 예금주: ${settlement.accountHolder}`
+              : "등록된 계좌 정보가 없습니다."}
           </span>
           <button
             type="button"
@@ -81,7 +95,12 @@ export function ScheduleSettlementSection({
       <div>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-foreground">{"정산 현황"}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground">{"정산 현황"}</h3>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                {getTransferStatusLabel(settlement.transferStatus)}
+              </span>
+            </div>
             <div className="mt-1 flex gap-3">
               <button
                 type="button"

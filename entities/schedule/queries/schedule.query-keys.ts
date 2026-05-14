@@ -4,4 +4,6 @@ export const SCHEDULE_QUERY_KEYS = {
     [...SCHEDULE_QUERY_KEYS.all, "group-list", groupId, size] as const,
   detailMeta: (scheduleId: number) =>
     [...SCHEDULE_QUERY_KEYS.all, "detail-meta", scheduleId] as const,
+  settlement: (scheduleId: number) =>
+    [...SCHEDULE_QUERY_KEYS.all, "settlement", scheduleId] as const,
 };

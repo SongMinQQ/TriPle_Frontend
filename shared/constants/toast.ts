@@ -204,6 +204,10 @@ export const TOAST_MESSAGES = {
       title: "여행 메타 정보 조회 실패",
       description: "여행 메타 정보를 불러오는 중 문제가 발생했습니다.",
     },
+    SETTLEMENT_DETAIL_FAILURE: {
+      title: "정산 정보 조회 실패",
+      description: "정산 정보를 불러오는 중 문제가 발생했습니다.",
+    },
     MEMBER_ADD_SUCCESS: {
       title: "여행 멤버 추가 완료",
       description: "선택한 그룹원을 여행 일정에 추가했습니다.",

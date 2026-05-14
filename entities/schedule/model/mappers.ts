@@ -6,9 +6,11 @@ import {
 import type {
   GetScheduleMetaResponse,
   GetGroupSchedulesResponse,
+  GetScheduleSettlementResponse,
   GroupScheduleListItemDto,
   ScheduleMetaMemberDto,
 } from "./api/types";
+import type { ScheduleSettlement } from "./settlement";
 
 export interface GroupSchedulesViewData {
   items: Schedule[];
@@ -84,5 +86,24 @@ export const mapScheduleMetaResponse = (
   },
   members: Array.isArray(response.members)
     ? response.members.map(mapScheduleMetaMember)
+    : [],
+});
+
+export const mapScheduleSettlementResponse = (
+  response: GetScheduleSettlementResponse
+): ScheduleSettlement => ({
+  accountNumber: response.accountNumber ?? "",
+  bankName: response.bankName ?? "",
+  accountHolder: response.accountHolder ?? "",
+  totalAmount: response.totalAmount ?? 0,
+  transferStatus: response.transferStatus,
+  members: Array.isArray(response.members)
+    ? response.members.map((member) => ({
+        id: member.id,
+        name: member.name,
+        avatar: member.avatar ?? undefined,
+        amount: member.amount ?? 0,
+        settled: member.settled,
+      }))
     : [],
 });
