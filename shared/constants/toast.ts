@@ -208,6 +208,14 @@ export const TOAST_MESSAGES = {
       title: "정산 정보 조회 실패",
       description: "정산 정보를 불러오는 중 문제가 발생했습니다.",
     },
+    SETTLEMENT_UPDATE_SUCCESS: {
+      title: "정산 정보 수정 완료",
+      description: "정산 정보가 성공적으로 수정되었습니다.",
+    },
+    SETTLEMENT_UPDATE_FAILURE: {
+      title: "정산 정보 수정 실패",
+      description: "정산 정보 수정 중 문제가 발생했습니다.",
+    },
     MEMBER_ADD_SUCCESS: {
       title: "여행 멤버 추가 완료",
       description: "선택한 그룹원을 여행 일정에 추가했습니다.",

@@ -221,6 +221,163 @@ test.describe("Schedule settlement detail", () => {
     await expect(page.getByText("3,333", { exact: true })).toHaveCount(2);
   });
 
+  test("Success Case: 계좌 등록 모달 입력값을 정산 화면에 반영", async ({
+    page,
+  }) => {
+    let transferPatchRequestBody = null;
+    let transferPatchRequestHeaders = null;
+
+    await seedAccessToken(page);
+    await installMockWebSocket(page);
+    await mockScheduleDetailDependencies(page);
+    await page.route(TRANSFER_API_PATTERN, async (route) => {
+      if (route.request().method() === "PATCH") {
+        transferPatchRequestHeaders = route.request().headers();
+        transferPatchRequestBody = route.request().postDataJSON();
+
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            accountNumber: "123-000",
+            bankName: "우리은행",
+            accountHolder: "테스트예금주",
+            totalAmount: 10000,
+            transferStatus: "IN_PROGRESS",
+            members: [
+              {
+                id: "encrypted-id-1",
+                name: "member1",
+                avatar: "https://example.com/profile.png",
+                amount: 10000,
+                settled: false,
+              },
+            ],
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          accountNumber: null,
+          bankName: null,
+          accountHolder: null,
+          totalAmount: 10000,
+          transferStatus: "IN_PROGRESS",
+          members: [
+            {
+              id: "encrypted-id-1",
+              name: "member1",
+              avatar: "https://example.com/profile.png",
+              amount: 10000,
+              settled: false,
+            },
+          ],
+        }),
+      });
+    });
+
+    await page.goto(`${LOCAL_BASE_URL}/group/1/schedules/42`);
+    await page.getByRole("button", { name: "정산 보기" }).click();
+
+    await expect(page.getByText("등록된 계좌 정보가 없습니다.")).toBeVisible();
+
+    await page.getByRole("button", { name: "계좌 등록" }).click();
+
+    await expect(page.getByRole("dialog", { name: "계좌 등록" })).toBeVisible();
+
+    await page.getByRole("textbox", { name: "은행" }).fill("우리은행");
+    await page.getByRole("textbox", { name: "계좌번호" }).fill("123-000");
+    await page.getByRole("textbox", { name: "예금주" }).fill("테스트예금주");
+    await page.getByRole("button", { name: "저장" }).click();
+
+    await expect
+      .poll(() => transferPatchRequestBody)
+      .not.toBeNull();
+    expect(transferPatchRequestHeaders.authorization).toBe(
+      `Bearer ${ACCESS_TOKEN}`
+    );
+    expect(transferPatchRequestBody).toEqual({
+      accountNumber: "123-000",
+      bankName: "우리은행",
+      accountHolder: "테스트예금주",
+      totalAmount: 10000,
+      members: [
+        {
+          id: "encrypted-id-1",
+          amount: 10000,
+        },
+      ],
+    });
+    await expect(
+      page.getByText("123-000 우리은행 예금주: 테스트예금주")
+    ).toBeVisible();
+    await expect(
+      page.getByText("정산 정보 수정 완료", { exact: true }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "계좌 등록" })
+    ).toBeHidden();
+  });
+
+  test("Fail Case: 계좌 등록 API 실패 시 모달을 유지하고 에러 토스트를 표시", async ({
+    page,
+  }) => {
+    await seedAccessToken(page);
+    await installMockWebSocket(page);
+    await mockScheduleDetailDependencies(page);
+    await page.route(TRANSFER_API_PATTERN, async (route) => {
+      if (route.request().method() === "PATCH") {
+        await route.fulfill({
+          status: 400,
+          contentType: "application/json",
+          body: JSON.stringify({
+            message: "계좌번호는 필수입니다.",
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          accountNumber: null,
+          bankName: null,
+          accountHolder: null,
+          totalAmount: 10000,
+          transferStatus: "IN_PROGRESS",
+          members: [
+            {
+              id: "encrypted-id-1",
+              name: "member1",
+              avatar: "https://example.com/profile.png",
+              amount: 10000,
+              settled: false,
+            },
+          ],
+        }),
+      });
+    });
+
+    await page.goto(`${LOCAL_BASE_URL}/group/1/schedules/42`);
+    await page.getByRole("button", { name: "정산 보기" }).click();
+    await page.getByRole("button", { name: "계좌 등록" }).click();
+    await page.getByRole("button", { name: "저장" }).click();
+
+    await expect(page.getByRole("dialog", { name: "계좌 등록" })).toBeVisible();
+    await expect(
+      page.getByText("정산 정보 수정 실패", { exact: true }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByText("계좌번호는 필수입니다.", { exact: true }).first()
+    ).toBeVisible();
+    await expect(page.getByText("등록된 계좌 정보가 없습니다.")).toBeVisible();
+  });
+
   test("Fail Case: 정산 정보 조회 실패 시 에러 UI와 토스트를 표시", async ({
     page,
   }) => {

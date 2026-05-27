@@ -80,3 +80,16 @@ export interface GetScheduleSettlementResponse
   totalAmount: number | null;
   members: ScheduleSettlementMemberDto[];
 }
+
+export interface UpdateScheduleSettlementMemberRequest {
+  id: string;
+  amount: number;
+}
+
+export interface UpdateScheduleSettlementRequest {
+  accountNumber: string;
+  bankName: string;
+  accountHolder: string;
+  totalAmount: number;
+  members: UpdateScheduleSettlementMemberRequest[];
+}

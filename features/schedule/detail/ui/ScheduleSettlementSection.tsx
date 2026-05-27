@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CircleDollarSign, Copy } from "lucide-react";
 import type {
   ScheduleSettlement,
@@ -7,6 +8,7 @@ import type {
   SettlementSplitMode,
 } from "@/features/schedule/detail/model/types";
 import { ScheduleSettlementAccountChangeButton } from "@/features/schedule/detail/ui/ScheduleSettlementAccountChangeButton";
+import { ScheduleSettlementAccountRegisterModal } from "@/features/schedule/detail/ui/ScheduleSettlementAccountRegisterModal";
 import { ScheduleSettlementMemberList } from "@/features/schedule/detail/ui/ScheduleSettlementMemberList";
 
 const TRANSFER_STATUS_LABELS: Record<string, string> = {
@@ -22,7 +24,8 @@ interface ScheduleSettlementSectionProps {
   splitMode: SettlementSplitMode;
   isManualEditing: boolean;
   memberAmounts: Record<string, string>;
-  onSaveAccount: (account: ScheduleSettlementAccountForm) => void;
+  isSavingAccount: boolean;
+  onSaveAccount: (account: ScheduleSettlementAccountForm) => Promise<boolean>;
   onEqualSplit: () => void;
   onManualToggle: () => void;
   onAmountChange: (memberId: string, value: string) => void;
@@ -33,15 +36,25 @@ export function ScheduleSettlementSection({
   splitMode,
   isManualEditing,
   memberAmounts,
+  isSavingAccount,
   onSaveAccount,
   onEqualSplit,
   onManualToggle,
   onAmountChange,
 }: ScheduleSettlementSectionProps) {
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const hasAccount =
     Boolean(settlement.accountNumber) ||
     Boolean(settlement.bankName) ||
     Boolean(settlement.accountHolder);
+
+  const handleOpenAccountModal = () => {
+    setIsAccountModalOpen(true);
+  };
+
+  const handleCloseAccountModal = () => {
+    setIsAccountModalOpen(false);
+  };
 
   return (
     <section className="flex flex-col gap-6" aria-label="여행 정산">
@@ -49,8 +62,8 @@ export function ScheduleSettlementSection({
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold text-foreground">{"계좌번호"}</h3>
           <ScheduleSettlementAccountChangeButton
-            settlement={settlement}
-            onSave={onSaveAccount}
+            hasAccount={hasAccount}
+            onClick={handleOpenAccountModal}
           />
         </div>
         <div className="mt-3 flex items-center gap-3 rounded-lg bg-muted px-4 py-3">
@@ -143,6 +156,14 @@ export function ScheduleSettlementSection({
           onAmountChange={onAmountChange}
         />
       </div>
+
+      <ScheduleSettlementAccountRegisterModal
+        open={isAccountModalOpen}
+        settlement={settlement}
+        isSaving={isSavingAccount}
+        onClose={handleCloseAccountModal}
+        onSave={onSaveAccount}
+      />
     </section>
   );
 }

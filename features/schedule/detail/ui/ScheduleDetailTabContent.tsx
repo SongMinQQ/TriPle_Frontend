@@ -11,6 +11,7 @@ import type {
   SettlementSplitMode,
 } from "@/features/schedule/detail/model/types";
 import { getRouteParam } from "@/features/schedule/detail/model/scheduleEditorUtils";
+import { useScheduleSettlementUpdateAction } from "@/features/schedule/detail/model/useScheduleSettlementUpdateAction";
 import { ScheduleItineraryEditorSection } from "@/features/schedule/detail/ui/ScheduleItineraryEditorSection";
 import { ScheduleSettlementSection } from "@/features/schedule/detail/ui/ScheduleSettlementSection";
 import { ScheduleSettlementSectionSkeleton } from "@/features/schedule/detail/ui/ScheduleSettlementSectionSkeleton";
@@ -48,6 +49,10 @@ export function ScheduleDetailTabContent() {
     isError: isSettlementError,
     refetch: refetchSettlement,
   } = useScheduleSettlementQuery(routeScheduleId, activeTab === "settlement");
+  const {
+    isUpdatingSettlement,
+    requestUpdateScheduleSettlement,
+  } = useScheduleSettlementUpdateAction(routeScheduleId);
   const currentSettlement = settlement ?? fetchedSettlement;
 
   useEffect(() => {
@@ -91,17 +96,29 @@ export function ScheduleDetailTabContent() {
     setSplitMode("equal");
   }, [fetchedSettlement, routeScheduleId]);
 
-  const handleSaveAccount = (account: ScheduleSettlementAccountForm) => {
+  const handleSaveAccount = async (
+    account: ScheduleSettlementAccountForm
+  ): Promise<boolean> => {
     if (!currentSettlement) {
-      return;
+      return false;
     }
 
-    setSettlement((prev) => ({
-      ...(prev ?? currentSettlement),
+    const nextSettlement = {
+      ...currentSettlement,
       accountNumber: account.accountNumber,
       bankName: account.bankName,
       accountHolder: account.accountHolder,
-    }));
+    };
+    const updatedSettlement =
+      await requestUpdateScheduleSettlement(nextSettlement);
+
+    if (!updatedSettlement) {
+      return false;
+    }
+
+    setSettlement(updatedSettlement);
+    setMemberAmounts(getSettlementMemberAmounts(updatedSettlement));
+    return true;
   };
 
   const handleAmountChange = (memberId: string, value: string) => {
@@ -190,6 +207,7 @@ export function ScheduleDetailTabContent() {
               splitMode={splitMode}
               isManualEditing={isManualEditing}
               memberAmounts={memberAmounts}
+              isSavingAccount={isUpdatingSettlement}
               onSaveAccount={handleSaveAccount}
               onEqualSplit={handleEqualSplit}
               onManualToggle={handleManualToggle}
